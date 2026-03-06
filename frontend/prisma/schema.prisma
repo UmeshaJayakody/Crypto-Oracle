@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserSettings {
+  id              String   @id @default(cuid())
+  timezone        String   @default("Asia/Colombo")
+  currency        String   @default("lkr")
+  currencySymbol  String   @default("Rs")
+  country         String   @default("LK")
+  locale          String   @default("si-LK")
+  dateFormat      String   @default("DD/MM/YYYY")
+  timeFormat      String   @default("24h")
+  historyDays     Int      @default(30)
+  predictDays     Int      @default(7)
+  numSamples      Int      @default(20)
+  newsHoursBack   Int      @default(12)
+  quantileLow     Float    @default(0.1)
+  quantileHigh    Float    @default(0.9)
+  includeReddit   Boolean  @default(true)
+  theme           String   @default("dark")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model WatchlistItem {
+  id       String   @id @default(cuid())
+  coinId   String   @unique
+  symbol   String
+  name     String
+  imageUrl String?
+  addedAt  DateTime @default(now())
+}
+
+model PredictionLog {
+  id             String   @id @default(cuid())
+  coinId         String
+  currency       String
+  historyDays    Int
+  predictDays    Int
+  timezone       String
+  oracleScore    Float
+  direction      String
+  newsScore      Float
+  fearGreedScore Float
+  chronosScore   Float
+  resultJson     Json
+  createdAt      DateTime @default(now())
+
+  @@index([coinId, createdAt])
+}
+
+model NewsCache {
+  id        String   @id @default(cuid())
+  coinId    String
+  articles  Json
+  sentiment Json
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([coinId, expiresAt])
+}

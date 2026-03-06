@@ -1,0 +1,71 @@
+# ── Environment ───────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+pip-log.txt
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Node / Next.js ────────────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# ── Prisma ────────────────────────────────────────────────────────────────────
+frontend/prisma/migrations/
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ── AI / ML model weights ─────────────────────────────────────────────────────
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.gguf
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+*.out
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Secrets / keys ────────────────────────────────────────────────────────────
+*.pem
+*.key
+*.cert
+*.p12
+secrets/
