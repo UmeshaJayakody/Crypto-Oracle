@@ -1,10 +1,6 @@
-// Resolve API base for both local dev and remote access. If an explicit env var is set,
-// use it. Otherwise, on the client derive from the current origin (swap 3000 -> 8000),
-// and fall back to localhost for SSR.
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL
-  ?? (typeof window !== "undefined"
-    ? `${window.location.protocol}//${window.location.hostname}:8000`
-    : "http://localhost:8000");
+// Resolve API base. Prefer explicit env; otherwise use a relative /api path so Next.js
+// rewrite can proxy to the backend (avoids CORS and mixed-content issues).
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 
 export const DEFAULT_CURRENCY        = process.env.NEXT_PUBLIC_DEFAULT_CURRENCY ?? "USD";
 export const DEFAULT_CURRENCY_SYMBOL = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL  ?? "$";
