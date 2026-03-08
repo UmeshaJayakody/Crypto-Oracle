@@ -2,7 +2,8 @@
 
 import useSWR from "swr";
 import { getGlobalStats, getFearGreed, FearGreedData } from "@/lib/api";
-import { formatLKR, formatPct } from "@/lib/formatters";
+import { formatCurrency, formatPct } from "@/lib/formatters";
+import { DEFAULT_CURRENCY, DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants";
 import { clsx } from "clsx";
 
 export function GlobalStats() {
@@ -10,12 +11,13 @@ export function GlobalStats() {
   const { data: fg }     = useSWR<FearGreedData>("feargreed", getFearGreed, { refreshInterval: 3_600_000 });
 
   const g = global as Record<string, Record<string, number>> | undefined;
+  const cur = DEFAULT_CURRENCY.toLowerCase();
 
-  const totalMcap   = g?.total_market_cap?.lkr ?? 0;
+  const totalMcap   = g?.total_market_cap?.[cur] ?? 0;
   const mcapChange  = g?.market_cap_change_percentage_24h_usd ?? 0;
   const btcDom      = g?.market_cap_percentage?.btc ?? 0;
   const ethDom      = g?.market_cap_percentage?.eth ?? 0;
-  const totalVol    = g?.total_volume?.lkr ?? 0;
+  const totalVol    = g?.total_volume?.[cur] ?? 0;
   const activeCrpyt = (g as unknown as Record<string, number>)?.active_cryptocurrencies ?? 0;
 
   const fgColor = (v: number) => {
@@ -28,8 +30,8 @@ export function GlobalStats() {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-      <StatCard label="Total Market Cap" value={formatLKR(totalMcap)} sub={formatPct(mcapChange)} subColor={mcapChange >= 0 ? "text-oracle-emerald" : "text-oracle-rose"} />
-      <StatCard label="24h Volume" value={formatLKR(totalVol)} />
+      <StatCard label="Total Market Cap" value={formatCurrency(totalMcap, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)} sub={formatPct(mcapChange)} subColor={mcapChange >= 0 ? "text-oracle-emerald" : "text-oracle-rose"} />
+      <StatCard label="24h Volume" value={formatCurrency(totalVol, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)} />
       <StatCard label="BTC Dominance" value={`${btcDom.toFixed(1)}%`} />
       <StatCard label="ETH Dominance" value={`${ethDom.toFixed(1)}%`} />
       <StatCard label="Active Coins" value={activeCrpyt.toLocaleString()} />

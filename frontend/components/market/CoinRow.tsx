@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CoinMarket } from "@/lib/api";
-import { formatLKR, formatPct } from "@/lib/formatters";
+import { formatCurrency, formatPct } from "@/lib/formatters";
+import { DEFAULT_CURRENCY, DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants";
 import { clsx } from "clsx";
 
 interface Props {
@@ -55,13 +56,13 @@ export function CoinRow({ coin, rank }: Props) {
         </Link>
       </td>
       <td className="px-3 py-2.5 text-right">
-        <span className="font-mono text-sm text-oracle-text">{formatLKR(coin.current_price)}</span>
+        <span className="font-mono text-sm text-oracle-text">{formatCurrency(coin.current_price, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}</span>
       </td>
       <td className="px-3 py-2.5 text-right"><PctCell value={coin.price_change_percentage_1h_in_currency} /></td>
       <td className="px-3 py-2.5 text-right"><PctCell value={coin.price_change_percentage_24h} /></td>
       <td className="px-3 py-2.5 text-right"><PctCell value={coin.price_change_percentage_7d_in_currency} /></td>
       <td className="px-3 py-2.5 text-right">
-        <span className="font-mono text-xs text-oracle-muted">{formatLKR(coin.market_cap)}</span>
+        <span className="font-mono text-xs text-oracle-muted">{formatCurrency(coin.market_cap, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}</span>
       </td>
       <td className="px-3 py-2.5">
         <Sparkline prices={coin.sparkline_in_7d?.price ?? []} />

@@ -47,7 +47,7 @@ function SignalBar({ label, value, weight }: SignalBarProps) {
 
 export function SignalBreakdown({ signals }: Props) {
   const rows = [
-    { label: "Chronos-2",  value: signals.chronos_signal,    weight: "35%" },
+    { label: "Chronos",    value: signals.chronos_signal,    weight: "35%" },
     { label: "News LLM",   value: signals.news_signal,       weight: "35%" },
     { label: "Fear/Greed", value: signals.fear_greed_signal, weight: "20%" },
     { label: "Reddit",     value: signals.reddit_signal,     weight: "10%" },

@@ -1,7 +1,7 @@
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
-export const DEFAULT_CURRENCY        = process.env.NEXT_PUBLIC_DEFAULT_CURRENCY ?? "LKR";
-export const DEFAULT_CURRENCY_SYMBOL = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL  ?? "Rs";
+export const DEFAULT_CURRENCY        = process.env.NEXT_PUBLIC_DEFAULT_CURRENCY ?? "USD";
+export const DEFAULT_CURRENCY_SYMBOL = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL  ?? "$";
 export const DEFAULT_TIMEZONE        = process.env.NEXT_PUBLIC_DEFAULT_TIMEZONE ?? "Asia/Colombo";
 export const COINGECKO_IMG           = process.env.NEXT_PUBLIC_COINGECKO_IMG    ?? "https://assets.coingecko.com/coins/images";
 

@@ -5,13 +5,14 @@ import useSWR from "swr";
 import { getTopCoins, CoinMarket } from "@/lib/api";
 import { CoinRow } from "./CoinRow";
 import { LoadingSkeleton } from "@/components/ui/LoadingSkeleton";
+import { DEFAULT_CURRENCY } from "@/lib/constants";
 
 type SortKey = "rank" | "price" | "change_24h" | "market_cap" | "volume";
 
 export function MarketOverview() {
   const [sortKey, setSortKey]   = useState<SortKey>("rank");
   const [sortAsc, setSortAsc]   = useState(true);
-  const [currency]              = useState("lkr");
+  const currency                = DEFAULT_CURRENCY.toLowerCase();
 
   const { data: coins = [], isLoading } = useSWR<CoinMarket[]>(
     `coins:${currency}`,

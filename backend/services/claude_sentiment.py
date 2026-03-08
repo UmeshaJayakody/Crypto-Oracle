@@ -1,6 +1,7 @@
 import httpx
 import json
 import os
+import re
 import logging
 
 logger = logging.getLogger(__name__)
@@ -98,13 +99,18 @@ async def analyze_news_with_claude(
             r.raise_for_status()
             data = r.json()
 
-        text   = data["content"][0]["text"].strip()
+        text = data["content"][0]["text"].strip()
+
+        # Strip markdown code fences that Claude sometimes adds, e.g. ```json ... ```
+        text = re.sub(r"^```(?:json)?\s*", "", text)
+        text = re.sub(r"\s*```$", "", text.strip()).strip()
+
         result = json.loads(text)
         result["articles_analyzed"] = len(articles)
         return result
 
     except json.JSONDecodeError as e:
-        logger.error(f"Claude returned invalid JSON: {e}")
+        logger.error(f"Claude returned invalid JSON: {e}\nRaw text: {text!r}")
         return {**_empty, "articles_analyzed": len(articles),
                 "summary": "Sentiment parsing error — please retry."}
     except Exception as e:

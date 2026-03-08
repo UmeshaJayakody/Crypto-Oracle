@@ -1,13 +1,14 @@
 import { clsx } from "clsx";
 
 interface Props {
-  label:  string;
+  label?: string | null;
   score?: number;
   size?:  "sm" | "md";
 }
 
 export function SentimentPill({ label, score, size = "sm" }: Props) {
-  const norm = label.toLowerCase();
+  const safeLabel = typeof label === "string" && label.trim().length > 0 ? label : "neutral";
+  const norm = safeLabel.toLowerCase();
 
   const styles = {
     bullish: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
@@ -22,7 +23,7 @@ export function SentimentPill({ label, score, size = "sm" }: Props) {
       styles,
     )}>
       {norm === "bullish" ? "▲" : norm === "bearish" ? "▼" : "●"}
-      {label}
+      {safeLabel}
       {score !== undefined && (
         <span className="opacity-70">
           {score >= 0 ? "+" : ""}{score.toFixed(2)}

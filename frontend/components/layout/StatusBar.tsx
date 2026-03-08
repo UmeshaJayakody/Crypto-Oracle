@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { getGlobalStats, getFearGreed, FearGreedData } from "@/lib/api";
-import { formatLKR, nowSL } from "@/lib/formatters";
+import { formatCurrency, nowSL } from "@/lib/formatters";
+import { DEFAULT_CURRENCY, DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants";
 import { clsx } from "clsx";
 
 export function StatusBar() {
@@ -19,8 +20,9 @@ export function StatusBar() {
   const { data: global } = useSWR("global", getGlobalStats, { refreshInterval: 120_000 });
   const { data: fearGreed } = useSWR<FearGreedData>("feargreed:bar", getFearGreed, { refreshInterval: 3_600_000 });
 
+  const cur = DEFAULT_CURRENCY.toLowerCase();
   const totalMcap = (global as Record<string, Record<string, number>> | undefined)
-    ?.total_market_cap?.lkr ?? 0;
+    ?.total_market_cap?.[cur] ?? 0;
   const btcDom = (global as Record<string, Record<string, number>> | undefined)
     ?.market_cap_percentage?.btc ?? 0;
 
@@ -38,7 +40,7 @@ export function StatusBar() {
       {totalMcap > 0 && (
         <div className="flex items-center gap-1.5 whitespace-nowrap">
           <span className="text-oracle-muted">Market Cap</span>
-          <span className="text-oracle-text">{formatLKR(totalMcap)}</span>
+          <span className="text-oracle-text">{formatCurrency(totalMcap, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}</span>
         </div>
       )}
 

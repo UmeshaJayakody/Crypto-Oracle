@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException
 from models.schemas import EnhancedPredictionRequest, EnhancedPredictionResponse
-from services.chronos_service import predict_prices
+from services.chronos_service import predict_prices, MODEL_NAME
 from services.news_aggregator import fetch_rss_articles, fetch_reddit_sentiment, filter_articles_for_coin
 from services.claude_sentiment import analyze_news_with_claude
 from services.fear_greed_service import get_fear_greed
 from services.coingecko_service import fetch_market_chart, fetch_coin_info
 from services.signal_fusion import fuse_signals, apply_sentiment_to_forecast, get_estimated_accuracy
-from services.cache_service import get_cached, set_cached
+from services.cache_service import get_cached, set_cached, get_stale
 from datetime import datetime, timedelta
 import pytz
 import asyncio
@@ -50,8 +50,68 @@ async def enhanced_prediction(req: EnhancedPredictionRequest):
         get_fear_greed(),
     )
 
+    # Persist USD→currency ratio for use when coin_info is later rate-limited
+    _cp = coin_info.get("current_price", {}) if isinstance(coin_info, dict) else {}
+    _usd = _cp.get("usd") if isinstance(_cp, dict) else None
+    _cur = req.vs_currency.lower()
+    _tgt = _cp.get(_cur)  if isinstance(_cp, dict) else None
+    if isinstance(_usd, (int, float)) and isinstance(_tgt, (int, float)) and _usd > 0:
+        set_cached(f"ratio:{req.coin_id}:{_cur}:usd", float(_tgt) / float(_usd), ttl=21600)
+
     if len(raw) < 10:
-        raise HTTPException(400, f"Insufficient price history: {len(raw)} points (need ≥10)")
+        requested_currency = req.vs_currency.lower()
+        logger.warning(
+            "Insufficient %s history for %s (%d points); retrying with USD fallback",
+            requested_currency,
+            req.coin_id,
+            len(raw),
+        )
+
+        raw_usd = await fetch_market_chart(req.coin_id, "usd", req.history_days)
+        if len(raw_usd) >= 10:
+            if requested_currency == "usd":
+                raw = raw_usd
+            else:
+                # Try to get conversion ratio from live coin_info or stale cache
+                ratio: float | None = None
+                current_price = coin_info.get("current_price", {}) if isinstance(coin_info, dict) else {}
+                usd_now    = current_price.get("usd")    if isinstance(current_price, dict) else None
+                target_now = current_price.get(requested_currency) if isinstance(current_price, dict) else None
+
+                if isinstance(usd_now, (int, float)) and isinstance(target_now, (int, float)) and usd_now > 0:
+                    ratio = float(target_now) / float(usd_now)
+                    # Persist ratio so future calls can convert even when coin_info 429s
+                    set_cached(f"ratio:{req.coin_id}:{requested_currency}:usd", ratio, ttl=21600)
+                else:
+                    # coin_info also unavailable – try last known ratio
+                    ratio = get_stale(f"ratio:{req.coin_id}:{requested_currency}:usd")
+                    if ratio:
+                        logger.warning(
+                            "Using stale USD->%s ratio for %s (%.6f)",
+                            requested_currency, req.coin_id, ratio,
+                        )
+
+                if ratio:
+                    raw = [
+                        {"timestamp": p["timestamp"], "price": float(p["price"]) * ratio}
+                        for p in raw_usd
+                    ]
+                    logger.info(
+                        "Applied USD->%s conversion fallback for %s (ratio=%.6f, %d points)",
+                        requested_currency, req.coin_id, ratio, len(raw),
+                    )
+                else:
+                    logger.warning(
+                        "USD fallback available for %s but no %s conversion ratio found",
+                        req.coin_id, requested_currency,
+                    )
+
+        if len(raw) < 10:
+            raise HTTPException(
+                400,
+                f"Insufficient price history: {len(raw)} points (need ≥10). "
+                f"coin={req.coin_id}, currency={req.vs_currency}",
+            )
 
     relevant_articles = filter_articles_for_coin(all_articles, req.coin_id)
 
@@ -161,7 +221,7 @@ async def enhanced_prediction(req: EnhancedPredictionRequest):
         "fear_greed":   fear_greed,
         "reddit":       reddit_data,
         "top_news":     top_news,
-        "model":        "chronos-2 + claude-haiku-sentiment",
+        "model":        f"{MODEL_NAME} + claude-haiku-sentiment",
         "generated_at": now_sl.isoformat(),
         "cached":       False,
     }

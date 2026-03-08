@@ -10,8 +10,8 @@ datasource db {
 model UserSettings {
   id              String   @id @default(cuid())
   timezone        String   @default("Asia/Colombo")
-  currency        String   @default("lkr")
-  currencySymbol  String   @default("Rs")
+  currency        String   @default("usd")
+  currencySymbol  String   @default("$")
   country         String   @default("LK")
   locale          String   @default("si-LK")
   dateFormat      String   @default("DD/MM/YYYY")

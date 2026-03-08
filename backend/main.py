@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
     logger.info("Starting Crypto Oracle backend...")
     loop = asyncio.get_event_loop()
     await loop.run_in_executor(None, warmup_model)
-    logger.info("Chronos-2 model ready.")
+    logger.info("Chronos model ready: %s", os.getenv("CHRONOS_MODEL", "amazon/chronos-bolt-small"))
     yield
     logger.info("Shutting down Crypto Oracle backend.")
 
@@ -55,5 +55,5 @@ async def health_check():
     return {
         "status": "ok",
         "gpu": get_gpu_stats(),
-        "model": os.getenv("CHRONOS_MODEL", "amazon/chronos-2"),
+        "model": os.getenv("CHRONOS_MODEL", "amazon/chronos-bolt-small"),
     }

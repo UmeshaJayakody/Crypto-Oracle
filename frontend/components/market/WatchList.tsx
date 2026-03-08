@@ -5,15 +5,16 @@ import Link from "next/link";
 import Image from "next/image";
 import useSWR from "swr";
 import { getTopCoins, CoinMarket } from "@/lib/api";
-import { formatLKR, formatPct } from "@/lib/formatters";
-import { TOP_COINS } from "@/lib/constants";
+import { formatCurrency, formatPct } from "@/lib/formatters";
+import { TOP_COINS, DEFAULT_CURRENCY, DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants";
 
 export function WatchList() {
   const [watchIds, setWatchIds] = useState<string[]>(["bitcoin", "ethereum", "solana"]);
+  const cur = DEFAULT_CURRENCY.toLowerCase();
 
   const { data: coins = [] } = useSWR<CoinMarket[]>(
-    "coins:lkr:small",
-    () => getTopCoins("lkr", 20),
+    `coins:${cur}:small`,
+    () => getTopCoins(cur, 20),
     { refreshInterval: 60_000 }
   );
 
@@ -39,7 +40,7 @@ export function WatchList() {
             <Image src={coin.image} alt={coin.name} width={16} height={16} className="rounded-full" />
             <div className="flex-1 min-w-0">
               <div className="text-xs font-mono text-oracle-text truncate">{coin.symbol.toUpperCase()}</div>
-              <div className="text-xs font-mono text-oracle-muted truncate">{formatLKR(coin.current_price)}</div>
+              <div className="text-xs font-mono text-oracle-muted truncate">{formatCurrency(coin.current_price, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}</div>
             </div>
             <div className={`text-xs font-mono ${coin.price_change_percentage_24h >= 0 ? "text-oracle-emerald" : "text-oracle-rose"}`}>
               {formatPct(coin.price_change_percentage_24h)}

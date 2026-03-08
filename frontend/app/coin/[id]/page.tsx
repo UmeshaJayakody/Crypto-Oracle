@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { use } from "react";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import { getCoinInfo, getCoinOHLCV, CoinInfo } from "@/lib/api";
 import { usePrediction } from "@/lib/hooks/usePrediction";
-import { formatLKR, formatPct } from "@/lib/formatters";
+import { formatCurrency, formatPct } from "@/lib/formatters";
 import { DEFAULT_CURRENCY, DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants";
 import { PredictionPanel } from "@/components/prediction/PredictionPanel";
 import { OracleScore } from "@/components/prediction/OracleScore";
@@ -15,12 +15,9 @@ import { CandlestickChart } from "@/components/chart/CandlestickChart";
 import { NewsFeed } from "@/components/news/NewsFeed";
 import { LoadingSkeleton } from "@/components/ui/LoadingSkeleton";
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
-
-export default function CoinPage({ params }: Props) {
-  const { id } = use(params);
+export default function CoinPage() {
+  const routeParams = useParams<{ id: string | string[] }>();
+  const id = Array.isArray(routeParams.id) ? routeParams.id[0] : routeParams.id;
   const [coinInfo, setCoinInfo] = useState<CoinInfo | null>(null);
   const [ohlcv,    setOhlcv]   = useState<{ timestamp: string; open: number; high: number; low: number; close: number }[]>([]);
   const [currency] = useState(DEFAULT_CURRENCY.toLowerCase());
@@ -64,7 +61,7 @@ export default function CoinPage({ params }: Props) {
         </div>
 
         <div className="ml-4 font-mono text-xl text-oracle-text">
-          {formatLKR(currentPrice)}
+          {formatCurrency(currentPrice, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}
         </div>
         <div className={`font-mono text-sm ${price24hColor}`}>
           {formatPct(coinInfo?.price_change_24h ?? 0)}

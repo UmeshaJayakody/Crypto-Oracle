@@ -9,6 +9,8 @@ interface Props {
 }
 
 export function NewsCard({ article, compact = false }: Props) {
+  const affectedCoins = Array.isArray(article.affected_coins) ? article.affected_coins : [];
+
   const horizonColor = {
     immediate: "text-oracle-rose",
     short:     "text-oracle-amber",
@@ -29,7 +31,7 @@ export function NewsCard({ article, compact = false }: Props) {
             {formatTimeAgo(article.published)}
           </span>
         </div>
-        <SentimentPill label={article.sentiment_label} score={article.sentiment_score} />
+        <SentimentPill label={article.sentiment_label} score={article.sentiment_score ?? undefined} />
       </div>
 
       <h3 className="text-oracle-text text-sm font-medium group-hover:text-oracle-cyan transition-colors leading-snug mb-1">
@@ -46,9 +48,9 @@ export function NewsCard({ article, compact = false }: Props) {
         <span className={horizonColor}>
           {article.impact_horizon} impact
         </span>
-        {article.affected_coins.length > 0 && (
+        {affectedCoins.length > 0 && (
           <span className="text-oracle-muted">
-            {article.affected_coins.slice(0, 3).map((c) => c.toUpperCase()).join(", ")}
+            {affectedCoins.slice(0, 3).map((c) => c.toUpperCase()).join(", ")}
           </span>
         )}
       </div>

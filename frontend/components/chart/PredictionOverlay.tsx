@@ -5,7 +5,8 @@
 // This can show metadata about the prediction shown in chart
 
 import { PredictionPoint } from "@/lib/api";
-import { formatLKR } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
+import { DEFAULT_CURRENCY, DEFAULT_CURRENCY_SYMBOL } from "@/lib/constants";
 
 interface Props {
   predictions:   PredictionPoint[];
@@ -21,10 +22,10 @@ export function PredictionOverlay({ predictions, currencySymbol }: Props) {
     <div className="flex items-center gap-4 px-3 py-1.5 bg-oracle-amber/5 border border-oracle-amber/20 rounded text-xs font-mono">
       <span className="text-oracle-amber">Chronos-2 Forecast</span>
       <span className="text-oracle-muted">
-        Median: <span className="text-oracle-text">{formatLKR(last.sentiment_adjusted_median)}</span>
+        Median: <span className="text-oracle-text">{formatCurrency(last.sentiment_adjusted_median, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}</span>
       </span>
       <span className="text-oracle-muted">
-        Range: <span className="text-oracle-text">{formatLKR(last.lower)} — {formatLKR(last.upper)}</span>
+        Range: <span className="text-oracle-text">{formatCurrency(last.lower, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)} — {formatCurrency(last.upper, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}</span>
       </span>
     </div>
   );

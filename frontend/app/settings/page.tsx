@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSettings } from "@/lib/hooks/useSettings";
-import { CURRENCIES, TIMEZONES } from "@/lib/constants";
+import { CURRENCIES, TIMEZONES, DEFAULT_CURRENCY } from "@/lib/constants";
 
 export default function SettingsPage() {
   const { settings, loading, save } = useSettings();
@@ -44,7 +44,7 @@ export default function SettingsPage() {
           <label className="block">
             <span className="text-oracle-muted text-xs block mb-1">Currency</span>
             <select
-              value={settings.currency as string ?? "lkr"}
+              value={settings.currency as string ?? DEFAULT_CURRENCY.toLowerCase()}
               onChange={(e) => handleSave("currency", e.target.value)}
               className="w-full bg-oracle-surface border border-oracle-border rounded px-3 py-2 text-oracle-text font-mono text-sm focus:border-oracle-cyan outline-none"
             >

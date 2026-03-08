@@ -8,9 +8,16 @@ def get_cached(key: str) -> Optional[Any]:
     entry = _cache.get(key)
     if entry and entry["expires_at"] > time.time():
         return entry["data"]
-    if entry:
-        del _cache[key]
+    if entry and entry["expires_at"] <= time.time():
+        # keep stale entry – don't delete, get_stale() may still need it
+        pass
     return None
+
+
+def get_stale(key: str) -> Optional[Any]:
+    """Return cached data even if expired. Used as last-resort fallback."""
+    entry = _cache.get(key)
+    return entry["data"] if entry else None
 
 
 def set_cached(key: str, data: Any, ttl: int = 300) -> None:

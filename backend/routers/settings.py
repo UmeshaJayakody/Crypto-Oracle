@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
+import os
 from services.cache_service import cache_stats
 from services.chronos_service import get_gpu_stats
 
@@ -8,11 +9,11 @@ router = APIRouter()
 
 # In-memory settings store (replace with DB in production)
 _settings: dict = {
-    "timezone":        "Asia/Colombo",
-    "currency":        "lkr",
-    "currency_symbol": "Rs",
-    "country":         "LK",
-    "locale":          "si-LK",
+    "timezone":        os.getenv("DEFAULT_TIMEZONE", "Asia/Colombo"),
+    "currency":        os.getenv("DEFAULT_CURRENCY", "usd"),
+    "currency_symbol": os.getenv("DEFAULT_CURRENCY_SYMBOL", "$"),
+    "country":         os.getenv("DEFAULT_COUNTRY", "LK"),
+    "locale":          os.getenv("DEFAULT_LOCALE", "en-LK"),
     "date_format":     "DD/MM/YYYY",
     "time_format":     "24h",
     "history_days":    30,

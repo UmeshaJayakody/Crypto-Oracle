@@ -21,9 +21,9 @@ RUN pip install --no-cache-dir \
     torch==2.3.0+cu121 \
     --index-url https://download.pytorch.org/whl/cu121
 
-# Install Chronos-2
-RUN pip install --no-cache-dir \
-    "chronos-forecasting @ git+https://github.com/amazon-science/chronos-forecasting.git"
+# Install Chronos-2 (force fresh clone so ChronosBoltConfig / ChronosConfig are up-to-date)
+RUN pip install --no-cache-dir --upgrade \
+    "chronos-forecasting @ git+https://github.com/amazon-science/chronos-forecasting.git@main"
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

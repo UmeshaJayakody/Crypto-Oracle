@@ -6,13 +6,15 @@ import Image from "next/image";
 import useSWR from "swr";
 import { getTopCoins, CoinMarket } from "@/lib/api";
 import { formatPct } from "@/lib/formatters";
+import { DEFAULT_CURRENCY } from "@/lib/constants";
 
 export function TopMovers() {
   const [mode, setMode] = useState<"gainers" | "losers">("gainers");
+  const cur = DEFAULT_CURRENCY.toLowerCase();
 
   const { data: coins = [] } = useSWR<CoinMarket[]>(
-    "coins:lkr:movers",
-    () => getTopCoins("lkr", 100),
+    `coins:${cur}:movers`,
+    () => getTopCoins(cur, 100),
     { refreshInterval: 60_000 }
   );
 

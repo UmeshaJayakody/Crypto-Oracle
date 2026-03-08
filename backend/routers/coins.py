@@ -7,7 +7,7 @@ router = APIRouter()
 
 @router.get("/list")
 async def list_coins(
-    vs_currency: str = Query("lkr"),
+    vs_currency: str = Query("usd"),
     per_page:    int = Query(50, ge=1, le=250),
     page:        int = Query(1, ge=1),
 ):

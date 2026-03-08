@@ -64,9 +64,9 @@ export interface NewsArticle {
   summary:         string;
   url:             string;
   published:       string;
-  sentiment_score: number;
-  sentiment_label: string;
-  affected_coins:  string[];
+  sentiment_score?: number | null;
+  sentiment_label?: string | null;
+  affected_coins?: string[] | null;
   impact_horizon:  string;
 }
 
@@ -143,8 +143,8 @@ export async function runPrediction(req: PredictionRequest): Promise<PredictionR
 }
 
 export async function getTopCoins(
-  currency: string = "lkr",
-  perPage: number = 50,
+  currency: string = "usd",
+  perPage: number = 20,
 ): Promise<CoinMarket[]> {
   return apiFetch(`/api/coins/list?vs_currency=${currency}&per_page=${perPage}`);
 }
@@ -163,7 +163,7 @@ export async function getGlobalStats(): Promise<Record<string, unknown>> {
 
 export async function getCoinHistory(
   coinId: string,
-  currency: string = "lkr",
+  currency: string = "usd",
   days: number = 30,
 ): Promise<{ timestamp: string; price: number }[]> {
   return apiFetch(`/api/history/${coinId}?vs_currency=${currency}&days=${days}`);
@@ -171,7 +171,7 @@ export async function getCoinHistory(
 
 export async function getCoinOHLCV(
   coinId: string,
-  currency: string = "lkr",
+  currency: string = "usd",
   days: number = 30,
 ): Promise<{ timestamp: string; open: number; high: number; low: number; close: number }[]> {
   return apiFetch(`/api/history/${coinId}?vs_currency=${currency}&days=${days}&ohlcv=true`);
