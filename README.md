@@ -4,6 +4,14 @@
 
 **Built for:** RTX 3050 6GB • Windows 11 WSL2 • Multi-currency (LKR/USD/EUR/etc) • CUDA 12.4.1
 
+**Research-only:** This project is for educational and research purposes **only**. It is **not** financial advice, trading guidance, or a production trading system.
+
+---
+
+## Demo Video
+
+<video src="Crypto%20Oracle.mp4" controls playsinline muted style="width:100%;max-width:960px;border:1px solid rgba(255,255,255,0.15);border-radius:12px;"></video>
+
 ---
 
 ## What Is Crypto Oracle?
