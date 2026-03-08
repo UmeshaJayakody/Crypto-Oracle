@@ -410,42 +410,42 @@ All inputs auto-save with green confirmation banner.
 
 ## Key Features
 
-### 🎨 Matte Glass UI Design
+### Matte Glass UI Design
 - Custom `@utility` blocks in Tailwind v4 for glass cards, pills, gradients, glows
 - Semantic white opacity hierarchy (`/90` → `/60` → `/35` → `/25`)
 - Cyan-only accent system for interactive states
 - Backdrop blur effects with subtle border glows
 
-### 🔮 Multi-Signal Oracle Score
+### Multi-Signal Oracle Score
 - 4 independent AI signals (Chronos GPU, Claude news, Fear/Greed, Reddit)
 - Weighted fusion (35% + 35% + 20% + 10%)
 - Confidence-adjusted median price forecast
 - Dynamic confidence bands (10%–95% quantile range)
 
-### 📊 TradingView-Grade Charts
+### TradingView-Grade Charts
 - Lightweight Charts v5 with OHLCV candlesticks
 - Prediction overlay (amber ribbon with glow)
 - Sentiment band below price action
 - Volume histogram with gradient fills
 
-### 🤖 GPU-Accelerated Forecasting
+### GPU-Accelerated Forecasting
 - Amazon Chronos-2 running on RTX 3050 (~2 seconds inference)
 - bfloat16 precision for VRAM efficiency
 - 10–100 trajectory samples (user configurable)
 - Auto-fallback to CPU if GPU unavailable
 
-### 📰 Live News Intelligence
+### Live News Intelligence
 - 6 RSS sources (CoinTelegraph, CoinDesk, Decrypt, Reuters, Bitcoin.com, CryptoSlate)
 - Claude Haiku 4-5 sentiment analysis per article
 - Confidence-weighted scoring (high confidence = full weight)
 - Auto-refresh every 5 minutes
 
-### 💾 Smart Caching
+### Smart Caching
 - Memory cache with TTL (1h predictions, 5–10m news)
 - SWR state management (stale-while-revalidate)
 - Instant re-renders on cached data
 
-### 🌍 Multi-Currency Support
+### Multi-Currency Support
 - 10 fiat currencies (LKR, USD, EUR, GBP, INR, JPY, AUD, SGD, MYR, CAD)
 - 7 timezones (Asia/Colombo, Mumbai, UTC, New York, London, Singapore, Tokyo)
 - Dynamic API base (works from localhost or remote IP)
@@ -636,5 +636,3 @@ crypto-oracle/
     └── public/
         └── logo.svg        ← Oracle logo (standalone)
 ```
-
-For full technical implementation details including all service code, schema definitions, and UI specifications, see [CRYPTO_ORACLE.md](CRYPTO_ORACLE.md).
