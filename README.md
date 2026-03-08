@@ -8,9 +8,9 @@
 
 ---
 
-## Demo Video
+## Platform Preview
 
-<video src="Crypto%20Oracle.mp4" controls playsinline muted style="width:100%;max-width:960px;border:1px solid rgba(255,255,255,0.15);border-radius:12px;"></video>
+![Crypto Oracle Platform Screenshot](image.png)
 
 ---
 
@@ -146,7 +146,7 @@ Combined Signal: +0.004 (Oracle)
 
 **Interpretation:** The combined signal of +0.004 is essentially **neutral**. While news and Reddit sentiment are positive, the Fear & Greed index is in strong fear territory (-0.76), creating a conflict. This is **not an actionable prediction** — wait for signals to align before making decisions.
 
-The Oracle Score card will show an **amber warning banner** with "⚠ Conflicting signals" to alert you that this prediction has low reliability.
+The Oracle Score card will show an **amber warning banner** with "Conflicting signals" to alert you that this prediction has low reliability.
 
 ### Why 72–76% Is Near Maximum for 1-Day Predictions
 
@@ -363,7 +363,7 @@ The button cycles through status messages during execution:
 - "Analyzing news..."
 - "Running Chronos GPU..."
 - "Fusing signals..."
-- "Oracle ready ✓"
+- "Oracle ready"
 
 **Center panel:** Candlestick chart + news feed
 - Lightweight Charts with dark theme
@@ -499,7 +499,7 @@ All inputs auto-save with green confirmation banner.
 
 ## Disclaimer
 
-> **⚠️ Educational and Research Use Only**
+> **Educational and Research Use Only**
 >
 > Crypto Oracle is built for **educational and research purposes only.**
 > Cryptocurrency markets are extremely volatile and unpredictable. The predictions
@@ -538,7 +538,7 @@ For issues, questions, or feature requests, open an issue on GitHub or contact t
 
 ---
 
-**Built with ❤️ for the crypto research community**
+**Built for the crypto research community**
 
 ---
 
