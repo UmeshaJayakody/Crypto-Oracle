@@ -12,44 +12,42 @@ export function NewsCard({ article, compact = false }: Props) {
   const affectedCoins = Array.isArray(article.affected_coins) ? article.affected_coins : [];
 
   const horizonColor = {
-    immediate: "text-oracle-rose",
-    short:     "text-oracle-amber",
-    long:      "text-oracle-muted",
-  }[article.impact_horizon] ?? "text-oracle-muted";
+    immediate: "text-rose-400",
+    short:     "text-amber-400",
+    long:      "text-white/30",
+  }[article.impact_horizon] ?? "text-white/30";
 
   return (
     <a
       href={article.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="block bg-oracle-card border border-oracle-border rounded-lg p-3 hover:border-oracle-cyan/40 transition-colors group"
+      className="block glass rounded-2xl p-5 group"
     >
-      <div className="flex items-start justify-between gap-2 mb-2">
+      <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-2 flex-wrap">
           <SourceBadge source={article.source} />
-          <span className="text-oracle-muted text-xs font-mono">
+          <span className="text-white/25 text-[10px] font-mono">
             {formatTimeAgo(article.published)}
           </span>
         </div>
         <SentimentPill label={article.sentiment_label} score={article.sentiment_score ?? undefined} />
       </div>
 
-      <h3 className="text-oracle-text text-sm font-medium group-hover:text-oracle-cyan transition-colors leading-snug mb-1">
+      <h3 className="text-white/85 text-sm font-medium group-hover:text-white transition-colors leading-snug mb-2">
         {article.title}
       </h3>
 
       {!compact && article.summary && (
-        <p className="text-oracle-muted text-xs leading-relaxed line-clamp-2 mb-2">
+        <p className="text-white/35 text-xs leading-relaxed line-clamp-2 mb-3">
           {article.summary}
         </p>
       )}
 
-      <div className="flex items-center gap-3 text-xs font-mono">
-        <span className={horizonColor}>
-          {article.impact_horizon} impact
-        </span>
+      <div className="flex items-center gap-3 text-[10px] font-mono">
+        <span className={horizonColor}>{article.impact_horizon} impact</span>
         {affectedCoins.length > 0 && (
-          <span className="text-oracle-muted">
+          <span className="text-white/25">
             {affectedCoins.slice(0, 3).map((c) => c.toUpperCase()).join(", ")}
           </span>
         )}

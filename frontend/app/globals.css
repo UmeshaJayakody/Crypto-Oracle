@@ -2,108 +2,278 @@
 
 @import "tailwindcss";
 
-/* Explicit source scanning — ensures all classes are generated in Docker */
+/* ─── Explicit source scanning — ensures all classes are generated in Docker ─ */
 @source "../app/**/*.{ts,tsx}";
 @source "../components/**/*.{ts,tsx}";
 @source "../lib/**/*.{ts,tsx}";
 
 @theme {
-  /* Oracle color palette */
-  --color-oracle-bg:      #0a0a0f;
-  --color-oracle-surface: #0f0f18;
-  --color-oracle-card:    #13131f;
-  --color-oracle-border:  #1e1e2e;
-  --color-oracle-cyan:    #00d4ff;
+  /* ── Background surfaces ──────────────────────────────── */
+  --color-oracle-bg:      #06060d;
+  --color-oracle-surface: #0b0b17;
+  --color-oracle-card:    #0f0f1e;
+  --color-oracle-border:  #1a1a2e;
+  /* ── Single accent ────────────────────────────────────── */
+  --color-oracle-cyan:    #22d3ee;
+  /* ── Status colours ───────────────────────────────────── */
   --color-oracle-amber:   #f59e0b;
   --color-oracle-emerald: #10b981;
   --color-oracle-rose:    #f43f5e;
-  --color-oracle-muted:   #6b7280;
-  --color-oracle-text:    #e2e8f0;
-
-  /* Fonts */
+  /* ── Typography ───────────────────────────────────────── */
+  --color-oracle-muted:   #64748b;
+  --color-oracle-text:    #f1f5f9;
+  /* ── Fonts ─────────────────────────────────────────────── */
   --font-mono:    "IBM Plex Mono", monospace;
   --font-display: "DM Serif Display", serif;
   --font-sans:    "DM Sans", sans-serif;
-
-  /* Custom animations */
-  --animate-pulse-slow: pulse      3s   cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-arc-draw:   arcDraw    1.2s ease-out forwards;
-  --animate-fade-in:    fadeIn     0.4s ease-out forwards;
-  --animate-slide-up:   slideUp    0.3s ease-out forwards;
-  --animate-glow-cyan:  glowCyan   2s   ease-in-out infinite;
+  /* ── Animations ─────────────────────────────────────────── */
+  --animate-pulse-slow: pulse    3s   cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-arc-draw:   arcDraw  1.2s ease-out forwards;
+  --animate-fade-in:    fadeIn   0.4s ease-out forwards;
+  --animate-slide-up:   slideUp  0.3s ease-out forwards;
+  --animate-glow-cyan:  glowCyan 2s   ease-in-out infinite;
 }
 
+/* ─── CSS custom properties ────────────────────────────────────────────── */
 :root {
-  --bg:      #0a0a0f;
-  --surface: #0f0f18;
-  --card:    #13131f;
-  --border:  #1e1e2e;
-  --cyan:    #00d4ff;
+  --bg:      #06060d;
+  --surface: #0b0b17;
+  --card:    #0f0f1e;
+  --border:  #1a1a2e;
+  --cyan:    #22d3ee;
   --amber:   #f59e0b;
   --emerald: #10b981;
   --rose:    #f43f5e;
-  --muted:   #6b7280;
-  --text:    #e2e8f0;
+  --muted:   #64748b;
+  --text:    #f1f5f9;
 }
 
-* {
+/* ─── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
+html { scroll-behavior: smooth; }
 
-html {
-  scroll-behavior: smooth;
-}
-
+/* ─── Base body ─────────────────────────────────────────────────────────── */
 body {
   background-color: var(--bg);
   color: var(--text);
   font-family: "DM Sans", sans-serif;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ─── Scrollbars ────────────────────────────────────────────────────────── */
+::-webkit-scrollbar           { width: 4px; height: 4px; }
+::-webkit-scrollbar-track     { background: transparent; }
+::-webkit-scrollbar-thumb     { background: rgba(255,255,255,0.10); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.20); }
+
+/* ─── Custom Tailwind utilities (@utility = scanned, variant-aware) ─────── */
+
+@utility font-mono {
+  font-family: "IBM Plex Mono", monospace;
 }
-::-webkit-scrollbar-track { background: var(--surface); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #2e2e4e; }
-
-.font-mono { font-family: "IBM Plex Mono", monospace; }
-.font-display { font-family: "DM Serif Display", serif; }
-
-/* Oracle glow effects */
-.glow-cyan   { box-shadow: 0 0 12px 3px rgba(0, 212, 255, 0.3); }
-.glow-emerald { box-shadow: 0 0 12px 3px rgba(16, 185, 129, 0.3); }
-.glow-rose   { box-shadow: 0 0 12px 3px rgba(244, 63, 94, 0.3); }
-
-/* Animated prediction line */
-@keyframes dash-move {
-  to { stroke-dashoffset: -20; }
+@utility font-display {
+  font-family: "DM Serif Display", serif;
 }
-.prediction-dash {
+
+/* Ambient page background with subtle radial glows */
+@utility oracle-bg-ambient {
+  background-color: #06060d;
+  background-image:
+    radial-gradient(ellipse 100% 40% at 50% -2%, rgba(34,211,238,0.035) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 30% at 92% 98%, rgba(16,185,129,0.020) 0%, transparent 50%);
+}
+
+/* Interactive glass card — subtle hover lift */
+@utility glass {
+  background: rgba(255,255,255,0.028);
+  border: 1px solid rgba(255,255,255,0.075);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: background 0.18s, border-color 0.18s, box-shadow 0.18s;
+  &:hover {
+    background: rgba(255,255,255,0.048);
+    border-color: rgba(255,255,255,0.115);
+  }
+}
+
+/* Non-interactive glass card */
+@utility glass-static {
+  background: rgba(255,255,255,0.028);
+  border: 1px solid rgba(255,255,255,0.075);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Sidebar / panel glass */
+@utility glass-panel {
+  background: rgba(255,255,255,0.022);
+  border-right: 1px solid rgba(255,255,255,0.060);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* White-to-transparent text gradient */
+@utility text-gradient {
+  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.45) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Cyan text gradient */
+@utility text-gradient-cyan {
+  background: linear-gradient(135deg, #22d3ee 0%, #67e8f9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Sentiment pills */
+@utility pill-bull {
+  background: rgba(16,185,129,0.10);
+  color: #34d399;
+  border: 1px solid rgba(52,211,153,0.22);
+}
+@utility pill-bear {
+  background: rgba(244,63,94,0.10);
+  color: #fb7185;
+  border: 1px solid rgba(251,113,133,0.22);
+}
+@utility pill-neut {
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.40);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+/* Glow box-shadows */
+@utility glow-cyan {
+  box-shadow: 0 0 20px 2px rgba(34, 211, 238, 0.18);
+}
+@utility glow-emerald {
+  box-shadow: 0 0 20px 2px rgba(16, 185, 129, 0.18);
+}
+@utility glow-rose {
+  box-shadow: 0 0 20px 2px rgba(244, 63, 94, 0.18);
+}
+@utility glow-amber {
+  box-shadow: 0 0 20px 2px rgba(245, 158, 11, 0.18);
+}
+
+/* ─── Range input ───────────────────────────────────────────────────────── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.10);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #22d3ee;
+  border: 2px solid #06060d;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(34,211,238,0.55);
+  transition: box-shadow 0.15s;
+}
+input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(34,211,238,0.18), 0 0 8px rgba(34,211,238,0.55);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #22d3ee;
+  border: 2px solid #06060d;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(34,211,238,0.55);
+}
+
+/* ─── Select ────────────────────────────────────────────────────────────── */
+select {
+  appearance: none;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.80);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  padding: 6px 28px 6px 10px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23ffffff44' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  transition: border-color 0.15s, background 0.15s;
+  outline: none;
+}
+select:focus, select:hover {
+  border-color: rgba(34,211,238,0.45);
+  background: rgba(255,255,255,0.065);
+}
+select option { background: #0b0b17; color: rgba(255,255,255,0.85); }
+
+/* ─── Text inputs ───────────────────────────────────────────────────────── */
+input[type="number"], input[type="text"] {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.85);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  padding: 7px 10px;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+}
+input[type="number"]:focus, input[type="text"]:focus {
+  border-color: rgba(34,211,238,0.45);
+  background: rgba(255,255,255,0.065);
+  box-shadow: 0 0 0 3px rgba(34,211,238,0.08);
+}
+
+/* ─── Checkbox ──────────────────────────────────────────────────────────── */
+input[type="checkbox"] { accent-color: #22d3ee; cursor: pointer; }
+
+/* ─── Animated prediction line ──────────────────────────────────────────── */
+@keyframes dash-move { to { stroke-dashoffset: -20; } }
+@utility prediction-dash {
   stroke-dasharray: 6 4;
   animation: dash-move 0.8s linear infinite;
 }
 
-/* Loading skeleton */
+/* ─── Loading skeleton ──────────────────────────────────────────────────── */
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
 }
-.skeleton {
-  background: linear-gradient(90deg, var(--card) 25%, #1a1a2e 50%, var(--card) 75%);
+@utility skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.03) 25%,
+    rgba(255,255,255,0.07) 50%,
+    rgba(255,255,255,0.03) 75%
+  );
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 4px;
+  animation: shimmer 1.6s infinite;
+  border-radius: 8px;
 }
 
-/* Oracle custom keyframes (referenced by @theme --animate-* above) */
+/* ─── Keyframes ─────────────────────────────────────────────────────────── */
 @keyframes arcDraw {
   0%   { stroke-dashoffset: 283; }
   100% { stroke-dashoffset: var(--target-offset); }
@@ -113,10 +283,10 @@ body {
   100% { opacity: 1; }
 }
 @keyframes slideUp {
-  0%   { opacity: 0; transform: translateY(8px); }
+  0%   { opacity: 0; transform: translateY(12px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 @keyframes glowCyan {
-  0%, 100% { box-shadow: 0 0 8px  2px rgba(0, 212, 255, 0.3); }
-  50%       { box-shadow: 0 0 20px 6px rgba(0, 212, 255, 0.6); }
+  0%, 100% { box-shadow: 0 0 10px 1px rgba(34,211,238,0.20); }
+  50%       { box-shadow: 0 0 24px 4px rgba(34,211,238,0.42); }
 }

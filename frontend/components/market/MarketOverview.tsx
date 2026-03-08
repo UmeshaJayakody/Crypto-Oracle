@@ -39,42 +39,42 @@ export function MarketOverview() {
     <th
       key={key}
       onClick={() => handleSort(key)}
-      className="px-3 py-2 text-right text-oracle-muted text-xs font-mono uppercase tracking-wider cursor-pointer hover:text-oracle-cyan transition-colors select-none"
+      className="px-4 py-3 text-right text-[11px] font-mono text-white/30 uppercase tracking-wider cursor-pointer hover:text-white/65 transition-colors select-none"
     >
-      {label} {sortKey === key ? (sortAsc ? "▲" : "▼") : ""}
+      {label}{sortKey === key ? (sortAsc ? " ▲" : " ▼") : ""}
     </th>
   );
 
   return (
-    <div className="bg-oracle-card border border-oracle-border rounded-lg overflow-hidden">
-      <div className="px-4 py-3 border-b border-oracle-border flex items-center justify-between">
-        <h2 className="font-display text-base text-oracle-text">Market Overview</h2>
-        <span className="text-oracle-muted text-xs font-mono">
-          Top {coins.length} coins by market cap · Auto-refreshes
+    <div className="glass-static rounded-2xl overflow-hidden">
+      <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+        <h2 className="font-display text-lg text-white/90 tracking-wide">Market Overview</h2>
+        <span className="text-white/30 text-[11px] font-mono">
+          Top {coins.length} · auto-refreshes
         </span>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-oracle-border">
-              <th className="px-3 py-2 text-left text-oracle-muted text-xs font-mono uppercase tracking-wider">#</th>
-              <th className="px-3 py-2 text-left text-oracle-muted text-xs font-mono uppercase tracking-wider">Coin</th>
-              {th("Price", "price")}
-              {th("1h%", "rank")}
-              {th("24h%", "change_24h")}
-              <th className="px-3 py-2 text-right text-oracle-muted text-xs font-mono">7d%</th>
+            <tr className="border-b border-white/[0.05]">
+              <th className="px-5 py-3 text-left text-[11px] font-mono text-white/30 uppercase tracking-wider w-10">#</th>
+              <th className="px-4 py-3 text-left text-[11px] font-mono text-white/30 uppercase tracking-wider">Coin</th>
+              {th("Price",      "price")}
+              {th("1h",         "rank")}
+              {th("24h",        "change_24h")}
+              <th className="px-4 py-3 text-right text-[11px] font-mono text-white/30 uppercase tracking-wider">7d</th>
               {th("Market Cap", "market_cap")}
-              <th className="px-3 py-2 text-left text-oracle-muted text-xs font-mono">7d Chart</th>
-              <th className="px-3 py-2" />
+              <th className="px-4 py-3 text-left  text-[11px] font-mono text-white/30 uppercase tracking-wider">7d Chart</th>
+              <th className="px-4 py-3 w-24" />
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               Array.from({ length: 10 }).map((_, i) => (
-                <tr key={i} className="border-b border-oracle-border">
-                  <td colSpan={9} className="px-3 py-2">
-                    <LoadingSkeleton className="h-7" />
+                <tr key={i} className="border-b border-white/[0.04]">
+                  <td colSpan={9} className="px-5 py-3">
+                    <LoadingSkeleton className="h-8" />
                   </td>
                 </tr>
               ))

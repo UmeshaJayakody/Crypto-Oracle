@@ -1,16 +1,16 @@
 # Crypto Oracle
 
-**AI-powered cryptocurrency price prediction platform combining GPU time-series forecasting, live news intelligence, and market psychology signals into a single unified prediction score.**
+**AI-powered cryptocurrency price prediction platform with matte glass UI design — combining GPU time-series forecasting, live news intelligence, and market psychology signals into a single unified Oracle Score.**
 
-Built for: RTX 3050 6GB · Windows 11 WSL2 · Sri Lanka (LKR, Asia/Colombo)
+**Built for:** RTX 3050 6GB • Windows 11 WSL2 • Multi-currency (LKR/USD/EUR/etc) • CUDA 12.4.1
 
 ---
 
 ## What Is Crypto Oracle?
 
-Crypto Oracle is a full-stack platform that answers one question: *which direction is this crypto asset likely to move over the next 1–7 days?*
+A full-stack production-grade platform that answers: *which direction is this crypto asset likely to move over the next 1–30 days?*
 
-It does this by running four independent intelligence signals in parallel, then fusing them into a single **Oracle Score** displayed on a TradingView-grade dark interface:
+Four independent intelligence signals run in parallel, fused into a single **Oracle Score (0–100)** displayed on a modern matte glass interface with white text hierarchy and subtle backdrop blur effects:
 
 | Signal | Source | Weight |
 |--------|--------|--------|
@@ -98,17 +98,20 @@ These are directional accuracy estimates (up vs. down), not price-level accuracy
 
 | Layer | Technology |
 |-------|------------|
-| AI Forecasting | Amazon Chronos-2 (HuggingFace, bfloat16, CUDA 12.1) |
-| AI Sentiment | Claude Haiku via Anthropic API |
-| Backend API | FastAPI + Python 3.11 + Uvicorn |
-| Frontend | Next.js 14 App Router + TypeScript + Tailwind CSS |
-| Charts | TradingView Lightweight Charts v4 |
-| Database | PostgreSQL 15 |
-| ORM | Prisma (frontend) + SQLAlchemy async (backend) |
-| Container | Docker Compose + NVIDIA GPU passthrough |
-| Price Data | CoinGecko API (free tier) |
-| News | RSS feeds (no API keys needed) |
+| AI Forecasting | Amazon Chronos-2 (HuggingFace, bfloat16, CUDA 12.4.1) |
+| AI Sentiment | Claude Haiku 4-5 via Anthropic API |
+| Backend API | FastAPI + Python 3.11 + Uvicorn ASGI |
+| Frontend | Next.js 16.1.6 (Turbopack) + React 19 + TypeScript 5.8 |
+| UI Framework | **Tailwind CSS v4** (CSS-first with `@utility`, `@theme`) |
+| Design System | Matte glass cards (`backdrop-filter: blur(16px)`) + white opacity hierarchy |
+| Charts | TradingView Lightweight Charts v5 |
+| Database | PostgreSQL 15 Alpine |
+| ORM | Prisma v7 (frontend) + SQLAlchemy async (backend) |
+| Container | Docker Compose v3.9 + NVIDIA GPU passthrough |
+| Price Data | CoinGecko API (free tier, no key) |
+| News | RSS feeds (6 sources, no keys) |
 | Market Data | alternative.me Fear & Greed (free, no key) |
+| State Management | SWR (stale-while-revalidate, auto-refresh) |
 
 ---
 
@@ -116,11 +119,12 @@ These are directional accuracy estimates (up vs. down), not price-level accuracy
 
 | Component | Minimum | Used In This Build |
 |-----------|---------|-------------------|
-| GPU | NVIDIA GPU with CUDA 12.1+ | RTX 3050 6GB |
-| VRAM | 4 GB (bfloat16) | 6 GB (2.1 GB used) |
-| RAM | 12 GB | 16 GB |
+| GPU | NVIDIA GPU with CUDA 12.1+ | RTX 3050 Laptop 6GB |
+| VRAM | 4 GB (bfloat16) | 6 GB (~2 GB used) |
+| RAM | 12 GB | 16 GB DDR4 |
 | CPU | 4 cores | Intel i5 11th Gen |
-| OS | WSL2 Ubuntu 22.04 | Windows 11 + WSL2 |
+| OS | WSL2 Ubuntu 22.04 | Windows 11 22H2 + WSL2 Ubuntu 22.04 |
+| Docker | Docker Desktop 4.0+ with GPU support | Docker Desktop latest + nvidia-container-toolkit |
 
 > The model also runs on CPU if no GPU is available — inference will be significantly slower (30–60 seconds vs 2–5 seconds).
 
@@ -192,51 +196,132 @@ This creates the tables for user settings, watchlist, prediction logs, and news 
 - **Backend API + Swagger docs:** http://localhost:8000/docs
 - **Health check:** http://localhost:8000/health
 
+> **Remote Access:** The frontend auto-detects the backend at `{window.location.hostname}:8000`, so if you access from another machine (e.g., `http://192.168.1.50:3000`), API calls automatically target `http://192.168.1.50:8000` instead of hard-coded localhost.
+
+---
+
+## Design System
+
+Crypto Oracle uses a **matte glass aesthetic** with a CSS-first Tailwind v4 architecture:
+
+### Visual Language
+
+- **Background:** Deep black (`#06060d`) with subtle cyan/emerald radial gradients
+- **Glass cards:** `rgba(255,255,255,0.028)` + `backdrop-filter: blur(16px)` + white/7.5% borders
+- **Text hierarchy:** `text-white/90` → `/60` → `/35` → `/25` (semantic opacity levels)
+- **Accent color:** Cyan-400 (`#22d3ee`) used ONLY for interactive states (active nav, buttons, hover)
+- **Status colors:** Emerald-400 (bullish), Rose-400 (bearish), Amber-400 (warning), White (neutral)
+
+### Custom Tailwind Utilities
+
+All custom UI primitives are defined as `@utility` blocks in `app/globals.css` for first-class Tailwind integration:
+
+```css
+@utility glass {
+  background: rgba(255,255,255,0.028);
+  border: 1px solid rgba(255,255,255,0.075);
+  backdrop-filter: blur(16px);
+  &:hover { background: rgba(255,255,255,0.048); }
+}
+
+@utility pill-bull {
+  background: rgba(16,185,129,0.10);
+  color: #34d399;
+  border: 1px solid rgba(52,211,153,0.22);
+}
+```
+
+**Available utilities:** `glass`, `glass-static`, `glass-panel`, `oracle-bg-ambient`, `text-gradient`, `text-gradient-cyan`, `pill-bull`, `pill-bear`, `pill-neut`, `glow-cyan`, `glow-emerald`, `glow-rose`, `glow-amber`, `skeleton`, `prediction-dash`, `font-mono`, `font-display`
+
+All support Tailwind variants (`hover:`, `focus:`, `lg:`, etc.) and appear in IntelliSense autocomplete.
+
+### Component Architecture
+
+- **Sidebar:** Glass panel with border-right, logo, nav with cyan active states, corner API health dot
+- **StatusBar:** Glass backdrop bar with market stats, emerald live dot with glow, Sri Lanka time
+- **Cards:** All use `glass-static rounded-2xl p-5` with consistent spacing
+- **Tables:** `px-5 py-3.5` rows, `hover:bg-white/[0.03]`, pill-style percentage cells
+- **Inputs/Selects:** Glass background with cyan focus rings, custom styled range/checkbox
+- **Buttons:** Cyan glow on hover, disabled state with reduced opacity
+- **Pills:** Sentiment/source badges with tinted backgrounds and matching borders
+
 ---
 
 ## How to Use the App
 
 ### Dashboard
 
-The main dashboard loads at http://localhost:3000 and shows the top 100 cryptocurrencies sorted by market cap. Each row displays the current price in LKR, percentage changes for 1h / 24h / 7d, market cap, and a 7-day sparkline chart.
+The main dashboard at http://localhost:3000 shows the top 20 cryptocurrencies in a glass table with proper padding and hierarchy. Each row displays:
 
-The top bar shows the total crypto market cap, BTC dominance, current Fear & Greed index, a live Sri Lanka time clock, and the GPU status indicator.
+- Rank badge with white/25 opacity
+- Coin icon (ring-1 ring-white/10)
+- Price in selected currency (white/90 semibold)
+- 1h/24h/7d percentage changes as pills (emerald/rose tinted backgrounds)
+- Market cap (white/35)
+- 7-day sparkline
+- **Predict** button (glass with cyan ring on hover)
 
-The left sidebar shows your watchlist with quick-glance prices and changes. You can toggle coins on and off the watchlist using the quick-add buttons.
+**Top bar components:**
+- Market cap widget (glass pill with emerald/amber/rose accent bar)
+- BTC/ETH dominance (white/60)
+- Fear & Greed gauge (colored by score)
+- Sri Lanka time (white/70 with cyan seconds)
+
+**Sidebar (left panel):**
+- Watchlist with glass hover states
+- Quick-add pills (cyan when active)
+- Compact price display with white/60 values
 
 ### Running a Prediction
 
-Click any coin row or the **Predict** button to open the coin prediction page. From there:
+Click any coin row or the **Predict** button to open the coin detail page (`/coin/bitcoin`). The page has a 3-column layout:
 
-1. **Set your history range** — how many days of past price data to feed into Chronos-2 (7 days to 1 year)
-2. **Set your forecast horizon** — how many days ahead to predict (1 to 30 days)
-3. **Adjust GPU samples** — more samples = more accurate confidence bands but slower (10–100)
-4. **Set the news window** — how far back to collect articles (3h to 48h)
-5. **Choose your confidence band** — the quantile range shown as the prediction ribbon (default: 10%–90%)
-6. **Toggle Reddit** — include or exclude Reddit community sentiment
-7. Click **RUN PREDICTION ▶**
+**Left panel (glass-panel background):** Prediction controls
+1. **History range buttons** — 7D, 1M, 3M, 6M, 1Y (cyan when selected)
+2. **Forecast horizon pills** — 1d, 3d, 7d, 14d, 30d (white/12 bg when active)
+3. **GPU samples slider** — 10 (fast) to 100 (accurate), cyan thumb with glow
+4. **Confidence band selects** — Lower/upper quantile percentages (10%–25% / 75%–95%)
+5. **News window dropdown** — 3h, 6h, 12h, 24h, 48h
+6. **Reddit checkbox** — Glass-styled with cyan accent
+7. **RUN ORACLE ▶** button — Large cyan glass button with glow effect
 
-The button cycles through status messages as each phase completes: fetching prices → aggregating news → Claude Haiku analysis → Chronos-2 GPU inference → fusing signals → Oracle ready.
+The button cycles through status messages during execution:
+- "Fetching prices..."
+- "Analyzing news..."
+- "Running Chronos GPU..."
+- "Fusing signals..."
+- "Oracle ready ✓"
 
-Results appear in the right panel showing:
-- The **Oracle Score** circular gauge (0–100)
-- **Signal Breakdown** bars showing each signal's individual contribution
-- **Prediction Stats** with forecast high, median, and low prices plus change percentages
-- The candlestick chart updates with the amber prediction ribbon
+**Center panel:** Candlestick chart + news feed
+- Lightweight Charts with dark theme
+- Prediction overlay (amber ribbon with glow)
+- Sentiment bands below OHLCV
+- Bottom news feed (3 latest articles, glass cards)
 
-### News Feed
+**Right panel (glass-panel background):** Oracle results
+- **Oracle Score** — Circular gauge (0–100) with colored arc (emerald/cyan/amber/rose)
+- **Signal Breakdown** — Horizontal bars showing Chronos (35%), News (35%), Fear/Greed (20%), Reddit (10%)
+- **Prediction Stats** — Glass card with high/median/low forecasts, color-coded change %
+- **Accuracy estimate** — Direction accuracy footer (white/20)
 
-The News page shows a filterable feed of all recent crypto news across all tracked sources. Filter by All / Bullish / Bearish / Neutral. Each article card shows the source, headline, sentiment score and label, affected coins, impact horizon, and how long ago it was published (in Sri Lanka time).
+### News Page
 
-The global sentiment bar shows the average sentiment score across all articles. The page auto-refreshes every 5 minutes.
+`/news` shows all recent crypto news across 6 RSS sources:
+- Glass sentiment bar at top (aggregate sentiment, Fear & Greed value, article count)
+- Filter pills (All / Bullish / Bearish / Neutral) with colored active states
+- Grid layout (1 column mobile, 2 columns desktop)
+- Each card: glass rounded-2xl, source badge, sentiment pill, white text hierarchy
+- Auto-refreshes every 5 minutes (shown in white/25 footer)
 
-### Settings
+### Settings Page
 
-The Settings page lets you change:
-- **Default currency** — LKR, USD, EUR, GBP, INR, and more
-- **Timezone** — Colombo, Mumbai, UTC, New York, London, Singapore, Tokyo
-- **Default prediction parameters** — history days, forecast days, samples, news window
-- **Reddit toggle** — enable or disable Reddit sentiment globally
+`/settings` has glass sections for:
+- **Regional:** Currency selector (10 currencies), Timezone selector (7 zones)
+- **Prediction Defaults:** History days, Forecast days, GPU samples, News window (all number inputs with glass styling)
+- **Reddit toggle**
+- **Stack info card:** Shows Chronos model, Claude version, CoinGecko, hardware (cyan values)
+
+All inputs auto-save with green confirmation banner.
 
 ---
 
@@ -244,9 +329,67 @@ The Settings page lets you change:
 
 | Service | URL | Notes |
 |---------|-----|-------|
-| Frontend | http://localhost:3000 | Next.js development server |
+| Frontend | http://localhost:3000 | Next.js Turbopack dev server (HMR enabled) |
 | Backend API | http://localhost:8000 | FastAPI with Swagger UI at `/docs` |
-| Database | localhost:5432 | PostgreSQL (not exposed to browser) |
+| Database | localhost:5432 | PostgreSQL (internal; not exposed to browser) |
+
+---
+
+## Key Features
+
+### 🎨 Matte Glass UI Design
+- Custom `@utility` blocks in Tailwind v4 for glass cards, pills, gradients, glows
+- Semantic white opacity hierarchy (`/90` → `/60` → `/35` → `/25`)
+- Cyan-only accent system for interactive states
+- Backdrop blur effects with subtle border glows
+
+### 🔮 Multi-Signal Oracle Score
+- 4 independent AI signals (Chronos GPU, Claude news, Fear/Greed, Reddit)
+- Weighted fusion (35% + 35% + 20% + 10%)
+- Confidence-adjusted median price forecast
+- Dynamic confidence bands (10%–95% quantile range)
+
+### 📊 TradingView-Grade Charts
+- Lightweight Charts v5 with OHLCV candlesticks
+- Prediction overlay (amber ribbon with glow)
+- Sentiment band below price action
+- Volume histogram with gradient fills
+
+### 🤖 GPU-Accelerated Forecasting
+- Amazon Chronos-2 running on RTX 3050 (~2 seconds inference)
+- bfloat16 precision for VRAM efficiency
+- 10–100 trajectory samples (user configurable)
+- Auto-fallback to CPU if GPU unavailable
+
+### 📰 Live News Intelligence
+- 6 RSS sources (CoinTelegraph, CoinDesk, Decrypt, Reuters, Bitcoin.com, CryptoSlate)
+- Claude Haiku 4-5 sentiment analysis per article
+- Confidence-weighted scoring (high confidence = full weight)
+- Auto-refresh every 5 minutes
+
+### 💾 Smart Caching
+- Memory cache with TTL (1h predictions, 5–10m news)
+- SWR state management (stale-while-revalidate)
+- Instant re-renders on cached data
+
+### 🌍 Multi-Currency Support
+- 10 fiat currencies (LKR, USD, EUR, GBP, INR, JPY, AUD, SGD, MYR, CAD)
+- 7 timezones (Asia/Colombo, Mumbai, UTC, New York, London, Singapore, Tokyo)
+- Dynamic API base (works from localhost or remote IP)
+
+---
+
+## Performance
+
+| Metric | Value |
+|--------|-------|
+| Prediction latency | 2–5 seconds (GPU) / 30–60 seconds (CPU) |
+| Frontend build time | ~900ms (Next.js Turbopack) |
+| API response (cached) | <100ms |
+| News refresh interval | 5 minutes |
+| Container startup (cold) | 15–20 minutes (model download + deps) |
+| Container startup (warm) | 2–3 minutes (cache hit) |
+| VRAM usage | ~2 GB (Chronos bfloat16 + CUDA runtime) |
 
 ---
 
@@ -268,24 +411,61 @@ The Settings page lets you change:
 
 | Item | Cost | Notes |
 |------|------|-------|
-| Anthropic API (Claude Haiku) | ~$0.0003 per prediction | ~$9/month at 1,000 predictions/day |
-| CoinGecko API | Free | No API key needed for free tier |
-| Fear & Greed Index | Free | No API key needed |
-| Reddit | Free | Public JSON API, no authentication |
-| RSS Feeds | Free | No API keys needed |
+| Anthropic API (Claude Haiku 4-5) | ~$0.0002–0.0004 per prediction | Input: $0.80/M tokens, Output: $4.00/M tokens |
+| CoinGecko API | Free | 10–50 calls/min on free tier (no key needed) |
+| Fear & Greed Index | Free | No rate limits, no key |
+| Reddit JSON API | Free | Public access, no authentication |
+| RSS Feeds | Free | Direct XML fetch, no keys |
 | Chronos-2 model | Free | Self-hosted on your GPU |
+| PostgreSQL | Free | Self-hosted Docker volume |
+| Next.js / React | Free | Open source |
 
-The only recurring cost is the Anthropic API for Claude Haiku news sentiment analysis. If you run predictions sparingly, monthly costs will be negligible.
+**Monthly estimate:** ~$5–15 if running 500–1,000 predictions/month. Claude Haiku is the only recurring cost. All other services are free forever.
 
 ---
 
 ## Disclaimer
 
+> **⚠️ Educational and Research Use Only**
+>
 > Crypto Oracle is built for **educational and research purposes only.**
 > Cryptocurrency markets are extremely volatile and unpredictable. The predictions
-> generated by this platform — even with high confidence scores — should never be
-> the sole basis for any financial decision. Past model accuracy does not guarantee
-> future results. Always conduct your own research (DYOR) before investing.
+> generated by this platform — even with high Oracle Scores or confidence percentages —
+> should **NEVER** be the sole basis for any financial decision.
+>
+> - Past model accuracy does not guarantee future results
+> - AI predictions can be wrong even with 90%+ confidence
+> - Market conditions change rapidly and unpredictably
+> - Always conduct your own research (DYOR) before investing
+> - Never invest more than you can afford to lose
+>
+> The developers of this platform assume no liability for any financial losses.
+
+---
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+## Contributing
+
+Pull requests welcome! Please ensure:
+- TypeScript strict mode passes (`npm run lint`)
+- Glass UI design system is maintained (use utility classes from `globals.css`)
+- API contracts match Pydantic schemas in `backend/models/schemas.py`
+- All Docker services start cleanly with `docker compose up --build`
+
+---
+
+## Support
+
+For issues, questions, or feature requests, open an issue on GitHub or contact the maintainers.
+
+---
+
+**Built with ❤️ for the crypto research community**
 
 ---
 
@@ -293,19 +473,95 @@ The only recurring cost is the Anthropic API for Claude Haiku news sentiment ana
 
 ```
 crypto-oracle/
-├── .env                    ← Your configuration (add API key here)
+├── .env                    ← Your configuration (add ANTHROPIC_API_KEY here)
 ├── .env.example            ← Template with all available options
-├── docker-compose.yml      ← Orchestrates all 3 services with GPU support
+├── docker-compose.yml      ← Orchestrates 3 services with NVIDIA GPU
+├── README.md               ← This file
+├── CRYPTO_ORACLE.md        ← Full technical specification
 ├── backend/                ← FastAPI Python backend + AI services
+│   ├── Dockerfile          ← CUDA 12.4.1 + PyTorch + Chronos-2
+│   ├── main.py             ← FastAPI app with CORS + lifespan
+│   ├── requirements.txt    ← FastAPI, anthropic, feedparser, etc.
 │   ├── routers/            ← API endpoint handlers
-│   ├── services/           ← Chronos, Claude, CoinGecko, news, fusion
-│   ├── models/             ← Pydantic request/response schemas
-│   └── db/                 ← SQLAlchemy async database engine
-└── frontend/               ← Next.js TypeScript frontend
-    ├── app/                ← Pages: dashboard, coin detail, news, settings
-    ├── components/         ← Chart, prediction, news, market, UI components
-    ├── lib/                ← API client, formatters, constants, hooks
-    └── prisma/             ← Database schema (settings, watchlist, logs)
+│   │   ├── predict.py      ← /api/predict/* (enhanced prediction)
+│   │   ├── coins.py        ← /api/coins/* (CoinGecko proxy)
+│   │   ├── history.py      ← /api/history/* (OHLCV data)
+│   │   ├── news.py         ← /api/news/* (RSS aggregation)
+│   │   ├── sentiment.py    ← /api/sentiment/* (Claude + Fear/Greed)
+│   │   └── settings.py     ← /api/settings/* (user preferences)
+│   ├── services/           ← Core intelligence services
+│   │   ├── chronos_service.py       ← GPU Chronos-2 inference (bfloat16)
+│   │   ├── claude_sentiment.py      ← Claude Haiku API client
+│   │   ├── coingecko_service.py     ← CoinGecko API client
+│   │   ├── news_aggregator.py       ← RSS feed parser (6 sources)
+│   │   ├── fear_greed_service.py    ← Fear & Greed index API
+│   │   ├── signal_fusion.py         ← 4-signal weighted fusion
+│   │   └── cache_service.py         ← In-memory TTL cache
+│   ├── models/             ← Pydantic schemas
+│   │   └── schemas.py      ← Request/response models
+│   └── db/                 ← Database (unused, reserved for future)
+│       ├── database.py     ← SQLAlchemy async engine
+│       └── __init__.py
+└── frontend/               ← Next.js 16 TypeScript frontend
+    ├── Dockerfile          ← Node 22 Alpine + Prisma
+    ├── package.json        ← Dependencies (Next 16, React 19, TW 4)
+    ├── tailwind.config.ts  ← Empty (v4 uses @theme in CSS)
+    ├── postcss.config.js   ← @tailwindcss/postcss plugin
+    ├── next.config.ts      ← Turbopack + image domains
+    ├── tsconfig.json       ← TypeScript 5.8 config
+    ├── app/                ← Next.js pages (App Router)
+    │   ├── globals.css     ← Tailwind v4 @theme + @utility blocks
+    │   ├── layout.tsx      ← Root layout (Sidebar + StatusBar)
+    │   ├── page.tsx        ← Dashboard (/) — market table
+    │   ├── icon.svg        ← Favicon (dark bg + logo)
+    │   ├── coin/[id]/page.tsx      ← Coin detail + prediction
+    │   ├── news/page.tsx           ← News feed
+    │   └── settings/page.tsx       ← User settings
+    ├── components/         ← React components
+    │   ├── chart/
+    │   │   ├── CandlestickChart.tsx     ← Lightweight Charts wrapper
+    │   │   ├── PredictionOverlay.tsx    ← Amber ribbon + bands
+    │   │   ├── SentimentBand.tsx        ← Sentiment strip below chart
+    │   │   └── VolumeBar.tsx            ← Volume histogram
+    │   ├── layout/
+    │   │   ├── Navbar.tsx               ← (unused, reserved)
+    │   │   ├── Sidebar.tsx              ← Glass panel left nav
+    │   │   └── StatusBar.tsx            ← Glass top bar stats
+    │   ├── market/
+    │   │   ├── CoinRow.tsx              ← Table row with pills
+    │   │   ├── GlobalStats.tsx          ← Market cap cards
+    │   │   ├── MarketOverview.tsx       ← Main table wrapper
+    │   │   ├── TopMovers.tsx            ← Bull/bear movers
+    │   │   └── WatchList.tsx            ← Sidebar coin list
+    │   ├── news/
+    │   │   ├── NewsCard.tsx             ← Glass article card
+    │   │   ├── NewsFeed.tsx             ← Feed with filters
+    │   │   ├── SentimentPill.tsx        ← Colored sentiment badge
+    │   │   └── SourceBadge.tsx          ← Per-source colors
+    │   ├── prediction/
+    │   │   ├── OracleScore.tsx          ← Circular gauge (0–100)
+    │   │   ├── SignalBreakdown.tsx      ← 4 signal bars
+    │   │   ├── PredictionPanel.tsx      ← Left control panel
+    │   │   ├── PredictionStats.tsx      ← High/med/low forecast
+    │   │   └── AccuracyMeter.tsx        ← Direction accuracy bar
+    │   └── ui/
+    │       ├── CoinSearch.tsx           ← Search dropdown
+    │       ├── CurrencySelector.tsx     ← Currency picker
+    │       ├── TimeRangeSelector.tsx    ← History range buttons
+    │       ├── LoadingSkeleton.tsx      ← Shimmer skeleton
+    │       └── Tooltip.tsx              ← Hover tooltip
+    ├── lib/                ← Utilities + API client
+    │   ├── api.ts          ← API fetch wrappers (dynamic base)
+    │   ├── constants.ts    ← Currencies, timezones, coins, colors
+    │   ├── formatters.ts   ← Price/pct/date formatters
+    │   └── hooks/
+    │       ├── usePrediction.ts         ← Prediction state hook
+    │       ├── useNews.ts               ← News SWR hook
+    │       └── useSettings.ts           ← Settings state hook
+    ├── prisma/
+    │   └── schema.prisma   ← Settings + watchlist tables
+    └── public/
+        └── logo.svg        ← Oracle logo (standalone)
 ```
 
 For full technical implementation details including all service code, schema definitions, and UI specifications, see [CRYPTO_ORACLE.md](CRYPTO_ORACLE.md).

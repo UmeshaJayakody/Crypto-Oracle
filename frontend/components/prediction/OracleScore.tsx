@@ -30,54 +30,49 @@ export function OracleScore({ signals }: Props) {
   const color      = scoreColor(signals.combined_signal);
   const label      = scoreLabel(signals.combined_signal);
 
-  // SVG arc: circumference of r=40 circle ≈ 251.3
   const CIRCUMFERENCE = 251.3;
   const offset = CIRCUMFERENCE - (scoreNorm / 100) * CIRCUMFERENCE;
 
   return (
-    <div className="bg-oracle-card border border-oracle-border rounded-lg p-4 text-center">
-      <div className="text-oracle-muted text-xs font-mono uppercase tracking-wider mb-3">
-        Oracle Score
-      </div>
+    <div className="glass-static rounded-2xl p-6 text-center">
+      <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] mb-5">Oracle Score</p>
 
       <div className="relative inline-flex items-center justify-center">
-        <svg width="120" height="120" viewBox="0 0 100 100">
-          {/* Background track */}
-          <circle
-            cx="50" cy="50" r="40"
-            fill="none"
-            stroke="#1e1e2e"
-            strokeWidth="8"
-          />
+        <svg width="130" height="130" viewBox="0 0 100 100">
+          {/* Outer ring */}
+          <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+          {/* Track */}
+          <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="7" />
           {/* Score arc */}
           <circle
             cx="50" cy="50" r="40"
             fill="none"
             stroke={color}
-            strokeWidth="8"
+            strokeWidth="7"
             strokeLinecap="round"
             strokeDasharray={CIRCUMFERENCE}
             strokeDashoffset={offset}
             transform="rotate(-90 50 50)"
-            style={{ transition: "stroke-dashoffset 1.2s ease-out" }}
+            style={{ transition: "stroke-dashoffset 1.2s ease-out", filter: `drop-shadow(0 0 6px ${color}60)` }}
           />
         </svg>
-
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-mono text-3xl font-bold" style={{ color }}>
+          <span className="font-mono text-3xl font-bold tabular-nums" style={{ color }}>
             {scoreNorm}
           </span>
-          <span className="text-xs font-mono mt-0.5" style={{ color }}>
+          <span className="text-[9px] font-mono mt-0.5 tracking-wider" style={{ color }}>
             {label}
           </span>
         </div>
       </div>
 
-      <div className="mt-2 text-oracle-muted text-xs font-mono">
-        Confidence: {signals.confidence_pct.toFixed(1)}%
-      </div>
-      <div className="mt-1 text-oracle-muted text-xs font-mono capitalize">
-        {signals.signal_strength} signal
+      <div className="mt-4 space-y-1">
+        <div className="text-white/35 text-[11px] font-mono">
+          Confidence: <span className="text-white/60 font-medium">{signals.confidence_pct.toFixed(1)}%</span>
+        </div>
+        <div className="text-white/25 text-[11px] font-mono capitalize">
+          {signals.signal_strength} signal
+        </div>
       </div>
     </div>
   );

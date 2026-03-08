@@ -13,34 +13,33 @@ interface SignalBarProps {
 }
 
 function SignalBar({ label, value, weight }: SignalBarProps) {
-  // Normalize -1..+1 to 0..100%
-  const pct     = ((value + 1) / 2) * 100;
-  const color   = value > 0.05 ? "#10b981" : value < -0.05 ? "#f43f5e" : "#6b7280";
   const barPct  = Math.abs(value) * 100;
   const isPos   = value >= 0;
+  const color   = value > 0.05 ? "#34d399" : value < -0.05 ? "#fb7185" : "rgba(255,255,255,0.35)";
 
   return (
-    <div className="space-y-1">
-      <div className="flex justify-between text-xs font-mono">
-        <span className="text-oracle-muted">{label}</span>
-        <span style={{ color }}>
-          {value >= 0 ? "+" : ""}{value.toFixed(3)}
-        </span>
+    <div className="space-y-1.5">
+      <div className="flex justify-between text-[11px] font-mono">
+        <span className="text-white/40">{label}</span>
+        <div className="flex items-center gap-2">
+          <span style={{ color }} className="font-medium tabular-nums">
+            {value >= 0 ? "+" : ""}{value.toFixed(3)}
+          </span>
+          <span className="text-white/20 text-[9px]">{weight}</span>
+        </div>
       </div>
-      <div className="relative h-2 bg-oracle-border rounded-full overflow-hidden">
-        {/* Center line */}
-        <div className="absolute left-1/2 top-0 w-px h-full bg-oracle-muted/40" />
-        {/* Bar from center */}
+      <div className="relative h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+        <div className="absolute left-1/2 top-0 w-px h-full bg-white/[0.15]" />
         <div
           className="absolute top-0 h-full rounded-full transition-all duration-700"
           style={{
-            width:      `${barPct / 2}%`,
-            left:       isPos ? "50%" : `${50 - barPct / 2}%`,
+            width:  `${barPct / 2}%`,
+            left:   isPos ? "50%" : `${50 - barPct / 2}%`,
             background: color,
+            boxShadow: `0 0 6px ${color}60`,
           }}
         />
       </div>
-      <div className="text-right text-xs text-oracle-muted font-mono">{weight}</div>
     </div>
   );
 }
@@ -54,13 +53,10 @@ export function SignalBreakdown({ signals }: Props) {
   ];
 
   return (
-    <div className="bg-oracle-card border border-oracle-border rounded-lg p-4 space-y-3">
-      <div className="text-oracle-muted text-xs font-mono uppercase tracking-wider">
-        Signal Breakdown
-      </div>
+    <div className="glass-static rounded-2xl p-5 space-y-4">
+      <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em]">Signal Breakdown</p>
       {rows.map((r) => <SignalBar key={r.label} {...r} />)}
-
-      <div className="pt-2 border-t border-oracle-border">
+      <div className="pt-3 border-t border-white/[0.06]">
         <SignalBar label="Combined" value={signals.combined_signal} weight="Oracle" />
       </div>
     </div>

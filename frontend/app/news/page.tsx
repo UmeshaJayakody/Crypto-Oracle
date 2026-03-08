@@ -34,46 +34,44 @@ export default function NewsPage() {
     : 0;
 
   const fgColor = (v: number) => {
-    if (v >= 70) return "text-oracle-emerald";
-    if (v >= 55) return "text-oracle-cyan";
-    if (v >= 45) return "text-oracle-muted";
-    if (v >= 30) return "text-oracle-amber";
-    return "text-oracle-rose";
+    if (v >= 70) return "text-emerald-400";
+    if (v >= 55) return "text-cyan-400";
+    if (v >= 45) return "text-white/45";
+    if (v >= 30) return "text-amber-400";
+    return "text-rose-400";
   };
 
   return (
-    <div className="p-4 max-w-7xl mx-auto space-y-4">
+    <div className="p-6 max-w-7xl mx-auto space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl text-oracle-text">News Intelligence</h1>
-        <div className="text-sm text-oracle-muted font-mono">
-          Auto-refreshes every 5 minutes
-        </div>
+        <h1 className="font-display text-xl font-semibold text-white/85">News Intelligence</h1>
+        <span className="text-[10px] text-white/25 font-mono">auto-refresh 5 min</span>
       </div>
 
       {/* Global Sentiment Bar */}
-      <div className="bg-oracle-card border border-oracle-border rounded-lg p-4 flex items-center gap-6">
+      <div className="glass-static rounded-2xl px-6 py-5 flex items-center gap-8">
         <div>
-          <div className="text-xs text-oracle-muted uppercase tracking-wide mb-1">Aggregate Sentiment</div>
-          <div className={`font-mono text-2xl font-semibold ${avgSentiment >= 0.05 ? "text-oracle-emerald" : avgSentiment <= -0.05 ? "text-oracle-rose" : "text-oracle-muted"}`}>
-            {formatPct(avgSentiment * 100, 1)}
-          </div>
+          <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.18em] mb-1.5">Aggregate Sentiment</p>
+          <p className={`font-mono text-2xl font-semibold tabular-nums ${
+            avgSentiment >= 0.05 ? "text-emerald-400" : avgSentiment <= -0.05 ? "text-rose-400" : "text-white/45"
+          }`}>{formatPct(avgSentiment * 100, 1)}</p>
         </div>
 
-        <div className="h-8 w-px bg-oracle-border" />
+        <div className="h-10 w-px bg-white/[0.06]" />
 
         <div>
-          <div className="text-xs text-oracle-muted uppercase tracking-wide mb-1">Fear & Greed</div>
-          <div className={`font-mono text-2xl font-semibold ${fgColor(fearGreed?.value ?? 50)}`}>
+          <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.18em] mb-1.5">Fear & Greed</p>
+          <p className={`font-mono text-2xl font-semibold tabular-nums ${fgColor(fearGreed?.value ?? 50)}`}>
             {fearGreed?.value ?? "—"}
-            <span className="text-sm ml-2">{fearGreed?.label}</span>
-          </div>
+            <span className="text-sm font-normal text-white/35 ml-2">{fearGreed?.label}</span>
+          </p>
         </div>
 
-        <div className="h-8 w-px bg-oracle-border" />
+        <div className="h-10 w-px bg-white/[0.06]" />
 
         <div>
-          <div className="text-xs text-oracle-muted uppercase tracking-wide mb-1">Articles</div>
-          <div className="font-mono text-2xl font-semibold text-oracle-text">{articles.length}</div>
+          <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.18em] mb-1.5">Articles</p>
+          <p className="font-mono text-2xl font-semibold text-white/75 tabular-nums">{articles.length}</p>
         </div>
       </div>
 
@@ -83,12 +81,12 @@ export default function NewsPage() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded text-sm font-mono capitalize transition-colors ${
+            className={`px-3.5 py-1.5 rounded-lg text-[11px] font-mono capitalize transition-all ${
               filter === f
-                ? f === "bullish" ? "bg-oracle-emerald/20 text-oracle-emerald border border-oracle-emerald/40"
-                  : f === "bearish" ? "bg-oracle-rose/20 text-oracle-rose border border-oracle-rose/40"
-                  : "bg-oracle-cyan/20 text-oracle-cyan border border-oracle-cyan/40"
-                : "bg-oracle-card text-oracle-muted border border-oracle-border hover:border-oracle-cyan/30"
+                ? f === "bullish" ? "bg-emerald-400/15 text-emerald-400 border border-emerald-400/35"
+                  : f === "bearish" ? "bg-rose-400/15 text-rose-400 border border-rose-400/35"
+                  : "bg-cyan-400/15 text-cyan-400 border border-cyan-400/35"
+                : "border border-white/[0.08] text-white/35 hover:text-white/60 hover:border-white/20"
             }`}
           >
             {f === "all" ? `All (${articles.length})` : f}
@@ -98,19 +96,19 @@ export default function NewsPage() {
 
       {/* Articles Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <LoadingSkeleton key={i} className="h-32" />
+            <LoadingSkeleton key={i} className="h-36" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {filtered.map((article, i) => (
             <NewsCard key={i} article={article} />
           ))}
           {filtered.length === 0 && (
-            <div className="col-span-2 text-center text-oracle-muted py-12">
-              No {filter} articles found in the last 24 hours.
+            <div className="col-span-2 text-center text-white/25 font-mono text-sm py-16">
+              No {filter} articles in the last 24h
             </div>
           )}
         </div>

@@ -1,16 +1,16 @@
-const SOURCE_COLORS: Record<string, string> = {
-  "CoinTelegraph": "bg-orange-500/15 text-orange-400 border-orange-500/30",
-  "CoinDesk":      "bg-blue-500/15 text-blue-400 border-blue-500/30",
-  "Decrypt":       "bg-purple-500/15 text-purple-400 border-purple-500/30",
-  "Reuters":       "bg-gray-500/15 text-gray-300 border-gray-500/30",
-  "Bitcoin.com":   "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
-  "CryptoSlate":   "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
+const SOURCE_STYLES: Record<string, string> = {
+  "CoinTelegraph": "text-orange-300/80 border-orange-400/20  bg-orange-400/[0.07]",
+  "CoinDesk":      "text-blue-300/80   border-blue-400/20    bg-blue-400/[0.07]",
+  "Decrypt":       "text-purple-300/80 border-purple-400/20  bg-purple-400/[0.07]",
+  "Reuters":       "text-white/55      border-white/15       bg-white/[0.04]",
+  "Bitcoin.com":   "text-amber-300/80  border-amber-400/20   bg-amber-400/[0.07]",
+  "CryptoSlate":   "text-cyan-300/80   border-cyan-400/20    bg-cyan-400/[0.07]",
 };
 
 export function SourceBadge({ source }: { source: string }) {
-  const style = SOURCE_COLORS[source] ?? "bg-gray-500/15 text-gray-400 border-gray-500/30";
+  const style = SOURCE_STYLES[source] ?? "text-white/40 border-white/10 bg-white/[0.04]";
   return (
-    <span className={`inline-block px-1.5 py-0.5 rounded border text-xs font-mono ${style}`}>
+    <span className={`inline-block px-2 py-0.5 rounded-lg border text-[10px] font-mono font-medium ${style}`}>
       {source}
     </span>
   );

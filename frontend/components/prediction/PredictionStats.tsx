@@ -10,48 +10,29 @@ interface Props {
 }
 
 export function PredictionStats({ stats, currency, symbol }: Props) {
-  const changeColor = stats.change_pct >= 0 ? "text-oracle-emerald" : "text-oracle-rose";
+  const changeColor = stats.change_pct >= 0 ? "text-emerald-400" : "text-rose-400";
   const changeArrow = stats.change_pct >= 0 ? "▲" : "▼";
 
   return (
-    <div className="bg-oracle-card border border-oracle-border rounded-lg p-4 space-y-2">
-      <div className="text-oracle-muted text-xs font-mono uppercase tracking-wider mb-3">
-        Price Forecast
-      </div>
+    <div className="glass-static rounded-2xl p-5 space-y-2.5">
+      <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] mb-4">Price Forecast</p>
 
-      <StatRow
-        label="Current"
-        value={formatPrice(stats.current_price, symbol)}
-        className="text-oracle-text"
-      />
-      <StatRow
-        label="High (upper)"
-        value={formatPrice(stats.predicted_high, symbol)}
-        sub={formatPct(stats.change_pct_high)}
-        subColor="text-oracle-emerald"
-      />
-      <StatRow
-        label="Median"
-        value={formatPrice(stats.predicted_median_final, symbol)}
-        sub={`${changeArrow} ${formatPct(stats.change_pct)}`}
-        subColor={changeColor}
-        bold
-      />
-      <StatRow
-        label="Low (lower)"
-        value={formatPrice(stats.predicted_low, symbol)}
-        sub={formatPct(stats.change_pct_low)}
-        subColor="text-oracle-rose"
-      />
+      <StatRow label="Current"    value={formatPrice(stats.current_price, symbol)} />
+      <StatRow label="High"       value={formatPrice(stats.predicted_high, symbol)}
+        sub={formatPct(stats.change_pct_high)} subColor="text-emerald-400" />
+      <StatRow label="Median"     value={formatPrice(stats.predicted_median_final, symbol)}
+        sub={`${changeArrow} ${formatPct(stats.change_pct)}`} subColor={changeColor} bold />
+      <StatRow label="Low"        value={formatPrice(stats.predicted_low, symbol)}
+        sub={formatPct(stats.change_pct_low)} subColor="text-rose-400" />
 
-      <div className="pt-2 border-t border-oracle-border">
-        <div className="flex justify-between text-xs font-mono">
-          <span className="text-oracle-muted">Avg band</span>
-          <span className="text-oracle-text">{formatPrice(stats.avg_confidence_band, symbol)}</span>
+      <div className="pt-3 border-t border-white/[0.06] space-y-2">
+        <div className="flex justify-between text-[11px] font-mono">
+          <span className="text-white/30">Avg band</span>
+          <span className="text-white/55 tabular-nums">{formatPrice(stats.avg_confidence_band, symbol)}</span>
         </div>
-        <div className="flex justify-between text-xs font-mono mt-1">
-          <span className="text-oracle-muted">Direction accuracy</span>
-          <span className="text-oracle-cyan">~{stats.estimated_direction_accuracy}</span>
+        <div className="flex justify-between text-[11px] font-mono">
+          <span className="text-white/30">Direction accuracy</span>
+          <span className="text-cyan-400 font-medium">~{stats.estimated_direction_accuracy}</span>
         </div>
       </div>
     </div>
@@ -70,14 +51,12 @@ function StatRow({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-oracle-muted text-xs font-mono">{label}</span>
-      <div className="text-right">
-        <span className={`font-mono text-xs ${bold ? "font-semibold text-oracle-text" : "text-oracle-muted"} ${className ?? ""}`}>
-          {value}
-        </span>
-        {sub && (
-          <span className={`font-mono text-xs ml-1.5 ${subColor ?? ""}`}>{sub}</span>
-        )}
+      <span className="text-white/35 text-[11px] font-mono">{label}</span>
+      <div className="text-right flex items-center gap-1.5">
+        <span className={`font-mono text-[11px] tabular-nums ${
+          bold ? "font-semibold text-white/85" : "text-white/45"
+        } ${className ?? ""}`}>{value}</span>
+        {sub && <span className={`font-mono text-[10px] ${subColor ?? ""}`}>{sub}</span>}
       </div>
     </div>
   );

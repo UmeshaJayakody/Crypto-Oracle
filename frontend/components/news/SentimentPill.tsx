@@ -11,23 +11,21 @@ export function SentimentPill({ label, score, size = "sm" }: Props) {
   const norm = safeLabel.toLowerCase();
 
   const styles = {
-    bullish: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-    bearish: "bg-rose-500/15 text-rose-400 border-rose-500/30",
-    neutral: "bg-gray-500/15 text-gray-400 border-gray-500/30",
-  }[norm] ?? "bg-gray-500/15 text-gray-400 border-gray-500/30";
+    bullish: "pill-bull",
+    bearish: "pill-bear",
+    neutral: "pill-neut",
+  }[norm] ?? "pill-neut";
 
   return (
     <span className={clsx(
-      "inline-flex items-center gap-1 border rounded font-mono capitalize",
-      size === "sm" ? "px-1.5 py-0.5 text-xs" : "px-2 py-1 text-sm",
+      "inline-flex items-center gap-1 rounded-lg font-mono capitalize font-medium",
+      size === "sm" ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-xs",
       styles,
     )}>
       {norm === "bullish" ? "▲" : norm === "bearish" ? "▼" : "●"}
       {safeLabel}
       {score !== undefined && (
-        <span className="opacity-70">
-          {score >= 0 ? "+" : ""}{score.toFixed(2)}
-        </span>
+        <span className="opacity-60 ml-0.5">{score >= 0 ? "+" : ""}{score.toFixed(2)}</span>
       )}
     </span>
   );

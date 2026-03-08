@@ -34,41 +34,41 @@ export default function CoinPage() {
   }, [id, currency, historyDays]);
 
   const price24hColor = (coinInfo?.price_change_24h ?? 0) >= 0
-    ? "text-oracle-emerald" : "text-oracle-rose";
+    ? "text-emerald-400" : "text-rose-400";
 
   const currentPrice = coinInfo?.current_price?.[currency] ?? 0;
 
   return (
     <div className="flex flex-col h-full">
       {/* Coin Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-oracle-border bg-oracle-surface">
+      <div className="flex items-center gap-4 px-6 py-4 border-b border-white/[0.06]" style={{ background: "rgba(255,255,255,0.015)" }}>
         {coinInfo?.image && (
           <Image
             src={coinInfo.image}
             alt={coinInfo.name ?? id}
-            width={32}
-            height={32}
-            className="rounded-full"
+            width={34}
+            height={34}
+            className="rounded-full ring-1 ring-white/10"
           />
         )}
-        <div>
-          <span className="font-display text-lg text-oracle-text">
+        <div className="flex items-baseline gap-2">
+          <span className="font-display text-lg text-white/90 font-semibold">
             {coinInfo?.name ?? id}
           </span>
-          <span className="ml-2 text-oracle-muted text-sm font-mono">
+          <span className="text-white/35 text-xs font-mono uppercase">
             {coinInfo?.symbol}
           </span>
         </div>
 
-        <div className="ml-4 font-mono text-xl text-oracle-text">
+        <div className="ml-3 font-mono text-xl font-semibold text-white/90 tabular-nums">
           {formatCurrency(currentPrice, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}
         </div>
-        <div className={`font-mono text-sm ${price24hColor}`}>
+        <div className={`font-mono text-sm font-medium tabular-nums ${price24hColor}`}>
           {formatPct(coinInfo?.price_change_24h ?? 0)}
         </div>
 
         {coinInfo?.market_cap_rank && (
-          <div className="ml-auto text-oracle-muted text-xs font-mono">
+          <div className="ml-auto px-2.5 py-1 rounded-lg border border-white/[0.08] text-white/30 text-[10px] font-mono">
             Rank #{coinInfo.market_cap_rank}
           </div>
         )}
@@ -78,7 +78,7 @@ export default function CoinPage() {
       <div className="flex flex-1 overflow-hidden">
 
         {/* Left: Control Panel */}
-        <div className="w-64 border-r border-oracle-border bg-oracle-surface overflow-y-auto">
+        <div className="w-64 border-r border-white/[0.05] overflow-y-auto" style={{ background: "rgba(255,255,255,0.012)" }}>
           <PredictionPanel
             coinId={id}
             currency={currency}
@@ -92,8 +92,7 @@ export default function CoinPage() {
 
         {/* Center: Chart + News */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Chart area */}
-          <div className="flex-1 p-3">
+          <div className="flex-1 p-4">
             <CandlestickChart
               coinId={id}
               ohlcv={ohlcv}
@@ -103,14 +102,13 @@ export default function CoinPage() {
             />
           </div>
 
-          {/* News panel */}
-          <div className="h-72 border-t border-oracle-border overflow-y-auto">
+          <div className="h-72 border-t border-white/[0.05] overflow-y-auto">
             <NewsFeed coinId={id} />
           </div>
         </div>
 
         {/* Right: Oracle Panel */}
-        <div className="w-72 border-l border-oracle-border bg-oracle-surface overflow-y-auto p-4 space-y-4">
+        <div className="w-72 border-l border-white/[0.05] overflow-y-auto p-4 space-y-4" style={{ background: "rgba(255,255,255,0.012)" }}>
           {loading && (
             <div className="space-y-3">
               <LoadingSkeleton className="h-40" />
@@ -120,7 +118,7 @@ export default function CoinPage() {
           )}
 
           {error && (
-            <div className="bg-oracle-rose/10 border border-oracle-rose/30 rounded-lg p-3 text-oracle-rose text-sm">
+            <div className="glass rounded-xl p-4 border-rose-500/20 text-rose-400 text-sm">
               {error}
             </div>
           )}
@@ -134,21 +132,16 @@ export default function CoinPage() {
                 currency={data.currency}
                 symbol={data.currency_symbol}
               />
-              <div className="text-center">
-                <p className="text-xs text-oracle-muted">
-                  Educational only — not financial advice
-                </p>
-                <p className="text-xs text-oracle-muted mt-1">
-                  Accuracy: ~{data.stats.estimated_direction_accuracy} direction
-                </p>
-              </div>
+              <p className="text-center text-[10px] font-mono text-white/20 px-2">
+                Educational only · ~{data.stats.estimated_direction_accuracy} direction accuracy
+              </p>
             </>
           )}
 
           {!loading && !data && !error && (
-            <div className="text-center text-oracle-muted text-sm mt-8 space-y-2">
-              <div className="text-4xl">◉</div>
-              <p>Configure prediction parameters and run Oracle</p>
+            <div className="text-center text-white/25 mt-12 space-y-3">
+              <div className="text-4xl opacity-40">◉</div>
+              <p className="text-xs font-mono">Configure parameters and run Oracle</p>
             </div>
           )}
         </div>

@@ -35,52 +35,50 @@ export function StatusBar() {
   };
 
   return (
-    <div className="flex items-center gap-4 px-4 py-2 bg-oracle-surface border-b border-oracle-border text-xs font-mono shrink-0 overflow-x-auto">
+    <div className="flex items-center gap-5 px-5 py-2.5 border-b border-white/[0.05] text-[11px] font-mono shrink-0 overflow-x-auto" style={{ background: 'rgba(255,255,255,0.015)', backdropFilter: 'blur(12px)' }}>
       {/* Market Cap */}
       {totalMcap > 0 && (
-        <div className="flex items-center gap-1.5 whitespace-nowrap">
-          <span className="text-oracle-muted">Market Cap</span>
-          <span className="text-oracle-text">{formatCurrency(totalMcap, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}</span>
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <span className="text-white/30 uppercase tracking-wider">Market Cap</span>
+          <span className="text-white/70 font-medium">{formatCurrency(totalMcap, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}</span>
         </div>
       )}
 
-      <div className="h-3 w-px bg-oracle-border shrink-0" />
+      <div className="h-3 w-px bg-white/[0.08] shrink-0" />
 
       {/* BTC Dominance */}
       {btcDom > 0 && (
-        <div className="flex items-center gap-1.5 whitespace-nowrap">
-          <span className="text-oracle-muted">BTC Dom</span>
-          <span className="text-oracle-text">{btcDom.toFixed(1)}%</span>
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <span className="text-white/30 uppercase tracking-wider">BTC Dom</span>
+          <span className="text-white/70 font-medium">{btcDom.toFixed(1)}%</span>
         </div>
       )}
 
-      <div className="h-3 w-px bg-oracle-border shrink-0" />
+      <div className="h-3 w-px bg-white/[0.08] shrink-0" />
 
       {/* Fear & Greed */}
       {fearGreed && (
         <div className={clsx(
-          "flex items-center gap-1.5 px-2 py-0.5 rounded border whitespace-nowrap",
+          "flex items-center gap-1.5 px-2.5 py-0.5 rounded-md border whitespace-nowrap text-[11px]",
           fgColor(fearGreed.value)
         )}>
-          <span>{fearGreed.value}</span>
-          <span>{fearGreed.label}</span>
+          <span className="font-semibold">{fearGreed.value}</span>
+          <span className="opacity-75">{fearGreed.label}</span>
         </div>
       )}
 
       <div className="flex-1" />
 
-      {/* GPU Status */}
-      <div className="flex items-center gap-1.5 whitespace-nowrap">
-        <div className="w-1.5 h-1.5 rounded-full bg-oracle-emerald animate-pulse" />
-        <span className="text-oracle-muted">RTX 3050</span>
+      {/* GPU */}
+      <div className="flex items-center gap-2 whitespace-nowrap">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.7)] animate-pulse" />
+        <span className="text-white/30">RTX 3050</span>
       </div>
 
-      <div className="h-3 w-px bg-oracle-border shrink-0" />
+      <div className="h-3 w-px bg-white/[0.08] shrink-0" />
 
-      {/* Clock */}
-      <div className="text-oracle-cyan whitespace-nowrap">
-        {time} SLST
-      </div>
+      {/* Time */}
+      <div className="text-cyan-400/70 whitespace-nowrap tabular-nums">{time}</div>
     </div>
   );
 }

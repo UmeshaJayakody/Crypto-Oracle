@@ -21,36 +21,34 @@ export function NewsFeed({ coinId, hoursBack = 12 }: Props) {
   return (
     <div className="flex flex-col h-full">
       {/* Filter tabs */}
-      <div className="flex items-center gap-1 px-3 py-2 border-b border-oracle-border bg-oracle-surface">
+      <div className="flex items-center gap-1.5 px-4 py-3 border-b border-white/[0.05]" style={{ background: 'rgba(255,255,255,0.015)' }}>
         {(["all", "bullish", "bearish", "neutral"] as Filter[]).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-2.5 py-1 rounded text-xs font-mono capitalize transition-colors ${
+            className={`px-2.5 py-1 rounded-lg text-[10px] font-mono capitalize transition-colors ${
               filter === f
-                ? f === "bullish" ? "bg-oracle-emerald/20 text-oracle-emerald"
-                  : f === "bearish" ? "bg-oracle-rose/20 text-oracle-rose"
-                  : "bg-oracle-cyan/20 text-oracle-cyan"
-                : "text-oracle-muted hover:text-oracle-text"
+                ? f === "bullish" ? "bg-emerald-400/15 text-emerald-400 border border-emerald-400/25"
+                  : f === "bearish" ? "bg-rose-400/15 text-rose-400 border border-rose-400/25"
+                  : "bg-cyan-400/15 text-cyan-400 border border-cyan-400/25"
+                : "text-white/30 hover:text-white/60 border border-transparent"
             }`}
           >
-            {f === "all" ? `ALL (${articles.length})` : f.toUpperCase()}
+            {f === "all" ? `All (${articles.length})` : f.toUpperCase()}
           </button>
         ))}
-        <span className="ml-auto text-oracle-muted text-xs font-mono">
-          News Intelligence
-        </span>
+        <span className="ml-auto text-white/20 text-[10px] font-mono">News Intelligence</span>
       </div>
 
       {/* Articles */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {loading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <LoadingSkeleton key={i} className="h-24" />
+            <LoadingSkeleton key={i} className="h-28" />
           ))
         ) : filtered.length === 0 ? (
-          <div className="text-center text-oracle-muted text-sm py-8">
-            No {filter !== "all" ? filter : ""} news found in the last {hoursBack}h.
+          <div className="text-center text-white/25 text-sm py-12">
+            No {filter !== "all" ? filter : ""} news in the last {hoursBack}h.
           </div>
         ) : (
           filtered.map((article, i) => (
