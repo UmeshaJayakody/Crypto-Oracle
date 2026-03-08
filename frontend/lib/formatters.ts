@@ -16,10 +16,10 @@ export function formatCurrency(value: number, symbol: string, currency: string):
   return `${symbol}${value.toFixed(2)}`;
 }
 
-export function formatPrice(value: number, symbol: string = "Rs"): string {
-  if (value >= 1_000_000) return `${symbol} ${(value / 1_000_000).toFixed(2)}M`;
-  if (value >= 1_000)     return `${symbol} ${value.toLocaleString("en-LK", { maximumFractionDigits: 0 })}`;
-  return `${symbol} ${value.toFixed(2)}`;
+export function formatPrice(value: number, symbol: string = "$"): string {
+  if (value >= 1_000_000) return `${symbol}${(value / 1_000_000).toFixed(2)}M`;
+  if (value >= 1_000)     return `${symbol}${value.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+  return `${symbol}${value.toFixed(2)}`;
 }
 
 export function formatPct(value: number, digits: number = 2): string {

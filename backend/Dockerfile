@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
+FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -16,10 +16,10 @@ RUN ln -sf /usr/bin/python3.11 /usr/bin/python && \
 
 WORKDIR /app
 
-# Install PyTorch CUDA 12.1 first (largest dependency)
+# Install PyTorch CUDA 12.4 (latest stable)
 RUN pip install --no-cache-dir \
-    torch==2.3.0+cu121 \
-    --index-url https://download.pytorch.org/whl/cu121
+    torch \
+    --index-url https://download.pytorch.org/whl/cu124
 
 # Install Chronos-2 (force fresh clone so ChronosBoltConfig / ChronosConfig are up-to-date)
 RUN pip install --no-cache-dir --upgrade \

@@ -4,8 +4,8 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { StatusBar } from "@/components/layout/StatusBar";
 
 export const metadata: Metadata = {
-  title: "Crypto Oracle — AI Price Prediction",
-  description: "AI-powered cryptocurrency price prediction using Chronos-2 and Claude Haiku news intelligence",
+  title: "Crypto Oracle",
+  description: "AI-powered cryptocurrency price prediction using Chronos and Claude Haiku news intelligence",
   keywords: ["crypto", "bitcoin", "prediction", "AI", "Chronos", "Claude"],
 };
 

@@ -31,7 +31,7 @@ export function CandlestickChart({ coinId, ohlcv, predictions, currency, currenc
     if (!containerRef.current || typeof window === "undefined") return;
 
     const loadChart = async () => {
-      const { createChart, ColorType, LineStyle } = await import("lightweight-charts");
+      const { createChart, ColorType, LineStyle, CandlestickSeries, LineSeries } = await import("lightweight-charts");
 
       const chart = createChart(containerRef.current!, {
         width:  containerRef.current!.clientWidth,
@@ -67,7 +67,7 @@ export function CandlestickChart({ coinId, ohlcv, predictions, currency, currenc
       });
 
       // Candlestick series
-      const candleSeries = chart.addCandlestickSeries({
+      const candleSeries = chart.addSeries(CandlestickSeries, {
         upColor:          "#10b981",
         downColor:        "#f43f5e",
         borderUpColor:    "#10b981",
@@ -88,7 +88,7 @@ export function CandlestickChart({ coinId, ohlcv, predictions, currency, currenc
       }
 
       // Prediction median line
-      const predMedianSeries = chart.addLineSeries({
+      const predMedianSeries = chart.addSeries(LineSeries, {
         color:     "#f59e0b",
         lineWidth: 2,
         lineStyle: LineStyle.Dashed,
@@ -96,13 +96,13 @@ export function CandlestickChart({ coinId, ohlcv, predictions, currency, currenc
       });
 
       // Prediction band (area series for uncertainty)
-      const predUpperSeries = chart.addLineSeries({
+      const predUpperSeries = chart.addSeries(LineSeries, {
         color:     "rgba(245,158,11,0.2)",
         lineWidth: 1,
         title:     "Pred High",
       });
 
-      const predLowerSeries = chart.addLineSeries({
+      const predLowerSeries = chart.addSeries(LineSeries, {
         color:     "rgba(245,158,11,0.2)",
         lineWidth: 1,
         title:     "Pred Low",

@@ -1,8 +1,37 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Explicit source scanning — ensures all classes are generated in Docker */
+@source "../app/**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
+@source "../lib/**/*.{ts,tsx}";
+
+@theme {
+  /* Oracle color palette */
+  --color-oracle-bg:      #0a0a0f;
+  --color-oracle-surface: #0f0f18;
+  --color-oracle-card:    #13131f;
+  --color-oracle-border:  #1e1e2e;
+  --color-oracle-cyan:    #00d4ff;
+  --color-oracle-amber:   #f59e0b;
+  --color-oracle-emerald: #10b981;
+  --color-oracle-rose:    #f43f5e;
+  --color-oracle-muted:   #6b7280;
+  --color-oracle-text:    #e2e8f0;
+
+  /* Fonts */
+  --font-mono:    "IBM Plex Mono", monospace;
+  --font-display: "DM Serif Display", serif;
+  --font-sans:    "DM Sans", sans-serif;
+
+  /* Custom animations */
+  --animate-pulse-slow: pulse      3s   cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-arc-draw:   arcDraw    1.2s ease-out forwards;
+  --animate-fade-in:    fadeIn     0.4s ease-out forwards;
+  --animate-slide-up:   slideUp    0.3s ease-out forwards;
+  --animate-glow-cyan:  glowCyan   2s   ease-in-out infinite;
+}
 
 :root {
   --bg:      #0a0a0f;
@@ -72,4 +101,22 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
+}
+
+/* Oracle custom keyframes (referenced by @theme --animate-* above) */
+@keyframes arcDraw {
+  0%   { stroke-dashoffset: 283; }
+  100% { stroke-dashoffset: var(--target-offset); }
+}
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes slideUp {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes glowCyan {
+  0%, 100% { box-shadow: 0 0 8px  2px rgba(0, 212, 255, 0.3); }
+  50%       { box-shadow: 0 0 20px 6px rgba(0, 212, 255, 0.6); }
 }

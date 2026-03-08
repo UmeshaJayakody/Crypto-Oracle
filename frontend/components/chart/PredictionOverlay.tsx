@@ -20,7 +20,7 @@ export function PredictionOverlay({ predictions, currencySymbol }: Props) {
 
   return (
     <div className="flex items-center gap-4 px-3 py-1.5 bg-oracle-amber/5 border border-oracle-amber/20 rounded text-xs font-mono">
-      <span className="text-oracle-amber">Chronos-2 Forecast</span>
+      <span className="text-oracle-amber">Chronos Forecast</span>
       <span className="text-oracle-muted">
         Median: <span className="text-oracle-text">{formatCurrency(last.sentiment_adjusted_median, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY)}</span>
       </span>
