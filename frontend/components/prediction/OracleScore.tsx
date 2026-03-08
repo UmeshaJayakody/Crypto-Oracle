@@ -29,12 +29,20 @@ export function OracleScore({ signals }: Props) {
   const scoreNorm  = Math.round((signals.combined_signal + 1) / 2 * 100);
   const color      = scoreColor(signals.combined_signal);
   const label      = scoreLabel(signals.combined_signal);
+  
+  // Detect weak/conflicting signals (combined signal near zero)
+  const isWeak = Math.abs(signals.combined_signal) < 0.2;
+  const signalQuality = isWeak 
+    ? { border: "border-amber-400/25", text: "⚠ Conflicting signals", color: "text-amber-400" }
+    : Math.abs(signals.combined_signal) > 0.6
+    ? { border: "border-emerald-400/25", text: "✓ Strong alignment", color: "text-emerald-400" }
+    : { border: "border-cyan-400/20", text: "Moderate signal", color: "text-cyan-400" };
 
   const CIRCUMFERENCE = 251.3;
   const offset = CIRCUMFERENCE - (scoreNorm / 100) * CIRCUMFERENCE;
 
   return (
-    <div className="glass-static rounded-2xl p-6 text-center">
+    <div className={clsx("glass-static rounded-2xl p-6 text-center", isWeak && "border-amber-400/35")}>
       <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] mb-5">Oracle Score</p>
 
       <div className="relative inline-flex items-center justify-center">
@@ -73,6 +81,20 @@ export function OracleScore({ signals }: Props) {
         <div className="text-white/25 text-[11px] font-mono capitalize">
           {signals.signal_strength} signal
         </div>
+      </div>
+
+      {/* Signal Quality Indicator */}
+      <div className={clsx(
+        "mt-4 px-3 py-2 rounded-lg text-[10px] font-mono border",
+        signalQuality.border,
+        isWeak ? "bg-amber-400/[0.03]" : "bg-white/[0.015]"
+      )}>
+        <span className={signalQuality.color}>{signalQuality.text}</span>
+        {isWeak && (
+          <p className="text-white/25 mt-1 text-[9px]">
+            Combined signal: {signals.combined_signal.toFixed(3)} (near neutral)
+          </p>
+        )}
       </div>
     </div>
   );

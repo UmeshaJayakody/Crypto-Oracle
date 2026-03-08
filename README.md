@@ -94,6 +94,71 @@ These are directional accuracy estimates (up vs. down), not price-level accuracy
 
 ---
 
+## Interpreting Predictions
+
+### Understanding Signal Strength
+
+Not all predictions are created equal. The **combined signal** value (ranging from -1 to +1) reveals the consensus strength across all four intelligence sources:
+
+| Combined Signal | Quality | Tradability | UI Indicator |
+|----------------|---------|-------------|--------------|
+| **> +0.6 or < -0.6** | Strong | High confidence | Green checkmark "Strong alignment" |
+| **+0.3 to +0.6** or **-0.3 to -0.6** | Moderate | Use with other data | Cyan "Moderate signal" |
+| **-0.2 to +0.2** | Weak/Conflicting | Not actionable | Amber warning "Conflicting signals" |
+
+### When to Trust a Prediction
+
+**High Quality Predictions:**
+- Combined signal magnitude > 0.3 (far from neutral)
+- All four signals aligned in the same direction
+- Narrow confidence bands (< $3,000 for Bitcoin)
+- News confidence > 75%
+- Fear & Greed index moving in same direction as other signals
+
+**Low Quality Predictions (Wait for Better Setup):**
+- Combined signal near zero (-0.2 to +0.2)
+- Conflicting signals (e.g., Fear/Greed bearish but News/Reddit bullish)
+- Wide confidence bands (> $5,000 for Bitcoin)
+- News confidence < 50%
+- Low Reddit engagement (< 5 matching posts)
+
+### Real-World Example: Conflicting Signals
+
+**Scenario:** You run a prediction and see:
+
+```
+Signal Breakdown:
+• Chronos:    -0.030 (35%) — GPU sees slight bearish pattern
+• News LLM:   +0.380 (35%) — Claude found moderate bullish sentiment  
+• Fear/Greed: -0.760 (20%) — Strong fear in market (dominant bearish)
+• Reddit:     +0.667 (10%) — Community is bullish
+
+Combined Signal: +0.004 (Oracle)
+```
+
+**Interpretation:** The combined signal of +0.004 is essentially **neutral**. While news and Reddit sentiment are positive, the Fear & Greed index is in strong fear territory (-0.76), creating a conflict. This is **not an actionable prediction** — wait for signals to align before making decisions.
+
+The Oracle Score card will show an **amber warning banner** with "⚠ Conflicting signals" to alert you that this prediction has low reliability.
+
+### Why 72–76% Is Near Maximum for 1-Day Predictions
+
+Cryptocurrency markets are inherently chaotic systems influenced by factors no model can predict: regulatory surprises, whale movements, black swan events, social media viral moments, and quantum effects from other markets. Even professional algorithmic traders rarely exceed 65–70% directional accuracy on intraday crypto moves.
+
+**72–76% accuracy for next-day direction is already exceptional.** Higher accuracy rates would imply market inefficiency that would self-correct once exploited at scale.
+
+### How to Improve Prediction Quality
+
+Rather than chasing higher accuracy percentages, focus on **using predictions more intelligently:**
+
+1. **Use longer forecast horizons** — 7-day and 14-day predictions smooth out daily noise
+2. **Extend history length** — Increase from 90 days to 180 days for better pattern recognition
+3. **Increase GPU samples** — Raise from 20 to 50–100 samples for tighter confidence bands
+4. **Widen news window** — Use 24-hour news instead of 12-hour for more comprehensive sentiment
+5. **Wait for signal alignment** — Only act when all four signals point the same direction
+6. **Use stop-losses** — Even 75% accuracy means 1 in 4 predictions are wrong
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
