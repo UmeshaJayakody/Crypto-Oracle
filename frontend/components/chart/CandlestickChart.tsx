@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { PredictionPoint } from "@/lib/api";
-import { HISTORY_RANGES } from "@/lib/constants";
+import { useEffect, useRef } from "react";
+import { PredictionPoint, OracleSignals } from "@/lib/api";
+import { formatCurrency } from "@/lib/formatters";
 
 interface OHLCVPoint {
   timestamp: string;
@@ -13,14 +13,44 @@ interface OHLCVPoint {
 }
 
 interface Props {
-  coinId:        string;
-  ohlcv:         OHLCVPoint[];
-  predictions?:  PredictionPoint[];
-  currency:      string;
+  coinId:         string;
+  ohlcv:          OHLCVPoint[];
+  predictions?:   PredictionPoint[];
+  signals?:       OracleSignals;
+  currency:       string;
   currencySymbol: string;
 }
 
-export function CandlestickChart({ coinId, ohlcv, predictions, currency, currencySymbol }: Props) {
+function getDirectionStyle(signal?: number) {
+  if (signal === undefined || (signal >= -0.2 && signal <= 0.2))
+    return {
+      lineColor: "#f59e0b",
+      arrow:     "→",
+      label:     "NEUTRAL",
+      labelColor: "#f59e0b",
+      bg:        "rgba(245,158,11,0.08)",
+      border:    "rgba(245,158,11,0.28)",
+    };
+  if (signal > 0.2)
+    return {
+      lineColor: "#10b981",
+      arrow:     "▲",
+      label:     signal > 0.6 ? "STRONG BULL" : "BULLISH",
+      labelColor: "#10b981",
+      bg:        "rgba(16,185,129,0.08)",
+      border:    "rgba(16,185,129,0.32)",
+    };
+  return {
+    lineColor: "#f43f5e",
+    arrow:     "▼",
+    label:     signal < -0.6 ? "STRONG BEAR" : "BEARISH",
+    labelColor: "#f43f5e",
+    bg:        "rgba(244,63,94,0.08)",
+    border:    "rgba(244,63,94,0.32)",
+  };
+}
+
+export function CandlestickChart({ coinId, ohlcv, predictions, signals, currency, currencySymbol }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef     = useRef<unknown>(null);
   const candleRef    = useRef<unknown>(null);
@@ -87,7 +117,7 @@ export function CandlestickChart({ coinId, ohlcv, predictions, currency, currenc
         candleSeries.setData(candleData);
       }
 
-      // Prediction median line
+      // Prediction median line — color set on first render; updated dynamically via useEffect
       const predMedianSeries = chart.addSeries(LineSeries, {
         color:     "#f59e0b",
         lineWidth: 2,
@@ -154,6 +184,19 @@ export function CandlestickChart({ coinId, ohlcv, predictions, currency, currenc
     return () => { cleanup.then((fn) => fn && fn()); };
   }, []);
 
+  // Re-color prediction line when signals change
+  useEffect(() => {
+    if (!predMedRef.current || !signals) return;
+    const { lineColor } = getDirectionStyle(signals.combined_signal);
+    (predMedRef.current as { applyOptions: (o: unknown) => void }).applyOptions({ color: lineColor });
+    const bands = predBandRef.current as { upper: { applyOptions: (o: unknown) => void }; lower: { applyOptions: (o: unknown) => void } } | null;
+    if (bands) {
+      const bandColor = lineColor.replace(")", ", 0.15)").replace("rgb(", "rgba(") || `${lineColor}26`;
+      bands.upper.applyOptions({ color: `${lineColor}30` });
+      bands.lower.applyOptions({ color: `${lineColor}30` });
+    }
+  }, [signals]);
+
   // Update data when ohlcv/predictions change
   useEffect(() => {
     if (!candleRef.current || !ohlcv.length) return;
@@ -181,22 +224,79 @@ export function CandlestickChart({ coinId, ohlcv, predictions, currency, currenc
     bands.lower.setData(toSeries((p) => p.lower));
   }, [predictions]);
 
+  const hasPrediction = predictions && predictions.length > 0;
+  const dirStyle = getDirectionStyle(signals?.combined_signal);
+  const lastPred = hasPrediction ? predictions![predictions!.length - 1] : null;
+  const firstPred = hasPrediction ? predictions![0] : null;
+
   return (
     <div className="relative w-full h-full min-h-64 bg-oracle-bg rounded-lg border border-oracle-border overflow-hidden">
       <div ref={containerRef} className="w-full h-full" />
+
       {ohlcv.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center text-oracle-muted text-sm">
           Loading chart data...
         </div>
       )}
-      {predictions && predictions.length > 0 && (
-        <div className="absolute top-2 right-2 flex items-center gap-3 text-xs font-mono bg-oracle-card/80 px-2 py-1 rounded border border-oracle-border">
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-0.5 bg-oracle-emerald" /> Historical
+
+      {/* Legend row */}
+      <div className="absolute top-2 right-2 flex items-center gap-3 text-[10px] font-mono bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-lg border border-white/[0.07]">
+        <span className="flex items-center gap-1.5 text-white/40">
+          <span className="inline-block w-4 h-0.5 bg-emerald-500" />
+          Historical
+        </span>
+        {hasPrediction && (
+          <span className="flex items-center gap-1.5" style={{ color: dirStyle.labelColor + "aa" }}>
+            <span className="inline-block w-4 h-0.5" style={{ background: dirStyle.lineColor, opacity: 0.8 }} />
+            Forecast
           </span>
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-0.5 bg-oracle-amber border-dashed border-t" /> Forecast
+        )}
+      </div>
+
+      {/* Direction badge — appears after prediction is loaded */}
+      {hasPrediction && signals && (
+        <div
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2.5 px-4 py-2 rounded-xl border backdrop-blur-md font-mono text-xs"
+          style={{ background: dirStyle.bg, borderColor: dirStyle.border }}
+        >
+          {/* Arrow icon */}
+          <span className="text-base leading-none" style={{ color: dirStyle.labelColor }}>
+            {dirStyle.arrow}
           </span>
+
+          {/* Direction label */}
+          <span className="font-semibold tracking-wide" style={{ color: dirStyle.labelColor }}>
+            {dirStyle.label}
+          </span>
+
+          <span className="text-white/20">|</span>
+
+          {/* Median target */}
+          <span className="text-white/50">
+            Median{" "}
+            <span className="text-white/80">
+              {formatCurrency(lastPred!.sentiment_adjusted_median, currencySymbol, currency.toUpperCase())}
+            </span>
+          </span>
+
+          <span className="text-white/20">|</span>
+
+          {/* High / Low targets */}
+          <span className="text-white/40">
+            <span className="text-emerald-400/80">{formatCurrency(lastPred!.upper, currencySymbol, currency.toUpperCase())}</span>
+            {" / "}
+            <span className="text-rose-400/70">{formatCurrency(lastPred!.lower, currencySymbol, currency.toUpperCase())}</span>
+          </span>
+
+          {/* Change % */}
+          {signals.direction !== "neutral" && (
+            <>
+              <span className="text-white/20">|</span>
+              <span className="text-[10px]" style={{ color: dirStyle.labelColor }}>
+                signal {signals.combined_signal > 0 ? "+" : ""}{(signals.combined_signal * 100).toFixed(1)}%
+              </span>
+            </>
+          )}
         </div>
       )}
     </div>

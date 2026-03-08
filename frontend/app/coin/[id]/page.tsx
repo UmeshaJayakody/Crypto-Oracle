@@ -97,6 +97,7 @@ export default function CoinPage() {
               coinId={id}
               ohlcv={ohlcv}
               predictions={data?.predictions}
+              signals={data?.oracle_signals}
               currency={currency}
               currencySymbol={DEFAULT_CURRENCY_SYMBOL}
             />
